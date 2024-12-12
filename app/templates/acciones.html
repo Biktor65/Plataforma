@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Acciones Comerciales</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Acciones Comerciales</h1>
+        
+
+        <form action="/acciones" method="POST" class="client-form">
+            <input type="text" name="descripcion" placeholder="Nombre" required>
+            <button type="submit" class="btn">Agregar</button>
+        </form>
+        <button onclick="location.href='/'" class="btn btn-green">Volver al Inicio</button>
+
+        
+        <h2>Lista de Acciones</h2>
+        <table class="acciones-table">
+            <thead>
+                <tr>
+                    <th>Acción</th>
+                    <th>Editar</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for accion in acciones %}
+                <tr>
+                    <td>{{ accion[1] }}</td>
+                    <td>
+                        <a href="{{ url_for('acciones_clientes.edit_accion', codaccion=accion[0]) }}" class="btn-link">Editar</a>
+                    </td>
+                    <td>
+                        <form action="{{ url_for('acciones_clientes.delete_accion', codaccion=accion[0]) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete();">
+                            <button type="submit" class="btn btn-delete">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+    </div>
+    <script src="{{ url_for('static', filename='js/acciones.js') }}"></script>    
+
+</body>
+</html>

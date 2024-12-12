@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Acción Comercial</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Editar Acción Comercial</h1>
+        <form action="/acciones/edit/{{ accion.CODAccionComercial }}" method="POST" class="client-form" onsubmit="return confirmUpdate();">
+            <input type="text" name="descripcion" value="{{ accion.Descripcion }}" required>
+            <button type="submit" class="btn">Actualizar</button>
+            <button type="button" onclick="location.href='/acciones'" class="btn btn-green">Atras</button>
+        </form>
+    </div>
+
+    <script>
+        function confirmUpdate() {
+            return confirm("¿Estás seguro de que deseas actualizar esta acción comercial?");
+        }
+    </script>
+</body>
+</html>

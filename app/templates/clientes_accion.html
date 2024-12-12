@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Clientes</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Clientes</h1>
+
+        {% if mensaje %}
+            <div class="alert alert-success" style="color: green; margin-bottom: 20px;">
+                {{ mensaje }}
+            </div>
+        {% endif %}
+        {% if error %}
+            <div class="alert alert-danger" style="color: red; margin-bottom: 20px;">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <div style="position: relative;">
+            <input type="text" id="search" class="search-input" placeholder="Buscar Código Cliente" onkeyup="fetchSuggestions()">
+            <div id="suggestions" class="suggestions" style="display:none;"></div>
+        </div>
+
+        <label for="codaccion">Agregar Cliente:</label>
+        <form action="/clientes_accion" method="POST" onsubmit="return validateForm()" class="client-form">
+            <div style="display: flex; align-items: center;">
+                <input type="text" id="codcliente" name="codcliente" placeholder="Código Cliente" required>
+                <button type="button" id="buscar-btn" onclick="buscarClientes()">Buscar</button>
+            </div>
+            <div id="client-info" class="client-info" style="display:none;">
+                <p>Nombre Legal: <span id="nombreLegal"></span></p>
+                <p>Nombre Comercial: <span id="nombreComercial"></span></p>
+                <p>Promociones: <span id="promociones"></span></p>
+            </div>
+            <select name="codaccion" required>
+                <option value="">Añadir Promoción</option>
+                {% for accion in acciones_comerciales %}
+                    <option value="{{ accion.CODAccionComercial }}">{{ accion.Descripcion }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn">Agregar</button>
+        </form>
+
+        <!-- Formulario para cargar el archivo Excel -->
+        <div style="margin: 20px 0;">
+            <form action="/upload_excel" method="POST" enctype="multipart/form-data" id="uploadExcelForm">
+                <label for="excelFile">Cargar clientes desde Excel:</label>
+                <input type="file" name="file" id="excelFile" accept=".xlsx" required>
+                <button type="submit" class="btn btn-blue">Cargar y Procesar</button>
+            </form>
+        </div>
+
+        <button onclick="location.href='/'" class="btn btn-green">Volver al Inicio</button>
+
+        <table id="clientesAccionTable" class="table">
+            <thead>
+                <tr>
+                    <th>Código Cliente</th>
+                    <th>Promoción</th>
+                    <th>Nombre Legal</th>
+                    <th>Nombre Comercial</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="clientesAccionBody">
+                {% for cliente in clientes_accion %}
+                    <tr>
+                        <td class="cliente-codigo">{{ cliente.CODCLIENTE }}</td>
+                        <td>{{ cliente.Descripcion }}</td>
+                        <td>{{ cliente.NombreClienteLegal }}</td>
+                        <td>{{ cliente.NombreComercial }}</td>
+                        <td>
+                            <a href="{{ url_for('acciones_clientes.edit_cliente_accion', codcliente=cliente.CODCLIENTE, codaccion=cliente.CODAccionComercial) }}" class="edit-link">Editar</a>
+                            <form action="{{ url_for('acciones_clientes.delete_cliente_accion', codcliente=cliente.CODCLIENTE, codaccion=cliente.CODAccionComercial) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete();">
+                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+        <button id="loadMoreBtn" class="btn btn-blue" style="margin: 20px 0;">Cargar más</button>
+
+    </div>
+
+</body>
+<script src="{{ url_for('static', filename='js/clientes_accion.js') }}"></script>    
+
+</html>
