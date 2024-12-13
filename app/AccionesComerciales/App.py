@@ -1,4 +1,5 @@
-from flask import request, jsonify, Blueprint,render_template,redirect, url_for, jsonify,flash
+from flask import request, jsonify, Blueprint,render_template,redirect, url_for, jsonify
+from app.usuarios.views import login_required,role_required
 import pyodbc
 import pandas as pd
 import os
@@ -23,6 +24,8 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @acciones_clientes.route('/upload_excel', methods=['POST'])
+@login_required
+@role_required('admin')
 def upload_excel():
     if 'file' not in request.files:
         return redirect(url_for('acciones_clientes.clientes_accion', error="No se seleccionó ningún archivo."))
@@ -98,6 +101,8 @@ def procesar_excel(filepath):
 
 # CRUD para AccionesComerciales
 @acciones_clientes.route('/acciones', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
 def cargar_acciones():
     if request.method == 'POST':
         descripcion = request.form['descripcion']
@@ -125,6 +130,8 @@ def cargar_acciones():
     return render_template('acciones.html', acciones=acciones)
 
 @acciones_clientes.route('/acciones/edit/<int:codaccion>', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
 def edit_accion(codaccion):
     with pyodbc.connect(conexion_str) as conexion:
         cursor = conexion.cursor()
@@ -139,6 +146,8 @@ def edit_accion(codaccion):
     return render_template('edit_accion.html', accion=accion)
 
 @acciones_clientes.route('/acciones/delete/<int:codaccion>', methods=['POST'])
+@login_required
+@role_required('admin')
 def delete_accion(codaccion):
     with pyodbc.connect(conexion_str) as conexion:
         cursor = conexion.cursor()
@@ -149,6 +158,8 @@ def delete_accion(codaccion):
 # CRUD para ClienteAccionComercial
 
 @acciones_clientes.route('/clientes_accion', methods=['GET'])
+@login_required
+@role_required('admin')
 def clientes_accion():
     acciones_comerciales = []
     clientes_accion = []
@@ -196,6 +207,8 @@ def get_clientes_accion():
         return []
 
 @acciones_clientes.route('/fetch_clientes_accion_paginated', methods=['GET'])
+@login_required
+@role_required('admin')
 def fetch_clientes_accion_paginated():
     try:
         # Obtener los parámetros de paginación
@@ -233,6 +246,8 @@ def fetch_clientes_accion_paginated():
 
 
 @acciones_clientes.route('/clientes_accion/edit/<string:codcliente>/<int:codaccion>', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
 def edit_cliente_accion(codcliente, codaccion):
     with pyodbc.connect(conexion_str) as conexion:
         cursor = conexion.cursor()
@@ -257,6 +272,8 @@ def edit_cliente_accion(codcliente, codaccion):
 
 
 @acciones_clientes.route('/clientes_accion/delete/<string:codcliente>/<int:codaccion>', methods=['POST'])
+@login_required
+@role_required('admin')
 def delete_cliente_accion(codcliente, codaccion):
     with pyodbc.connect(conexion_str) as conexion:
         cursor = conexion.cursor()
@@ -265,6 +282,8 @@ def delete_cliente_accion(codcliente, codaccion):
     return redirect(url_for('acciones_clientes.clientes_accion'))
 
 @acciones_clientes.route('/fetch_cliente/<codcliente>', methods=['GET'])
+@login_required
+@role_required('admin')
 def fetch_cliente(codcliente):
     with pyodbc.connect(conexion_str) as conexion:
         cursor = conexion.cursor()
@@ -292,6 +311,8 @@ def fetch_cliente(codcliente):
         return {}, 404
 
 @acciones_clientes.route('/fetch_clientes_accion/<string:filter>', methods=['GET'])
+@login_required
+@role_required('admin')
 def fetch_clientes_accion(filter):
     with pyodbc.connect(conexion_str) as conexion:
         cursor = conexion.cursor()
@@ -306,6 +327,8 @@ def fetch_clientes_accion(filter):
     return jsonify([{'CODCLIENTE': c[0], 'NombreComercial': c[1]} for c in clientes])
 
 @acciones_clientes.route('/fetch_clientes/<string:filter>', methods=['GET'])
+@login_required
+@role_required('admin')
 def fetch_clientes(filter):
     with pyodbc.connect(conexion_str) as conexion:
         cursor = conexion.cursor()
