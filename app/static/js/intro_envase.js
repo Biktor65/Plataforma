@@ -10,7 +10,7 @@ $(document).ready(function() {
 
     function cargarClientes() {
         $.ajax({
-            url: '/api/clientes', 
+            url: '/usuario/api/clientes', 
             method: 'GET',
             dataType: 'json',
             success: function(data) {
@@ -63,7 +63,7 @@ $(document).ready(function() {
         // Enviar los datos usando AJAX
         $.ajax({
             type: "POST",
-            url: "/enviar_formulario",
+            url: "/usuario/enviar_formulario",
             data: formData,
             contentType: false,
             processData: false,

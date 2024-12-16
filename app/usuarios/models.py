@@ -1,5 +1,5 @@
 import pyodbc
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import check_password_hash
 from app.database import get_db_connection
 
 def obtener_usuario(nom_usuario):
@@ -11,6 +11,5 @@ def obtener_usuario(nom_usuario):
     conexion.close()
     return usuario
 
-def verificar_contra(usuario,contraseña):
-    return check_password_hash(usuario[2], contraseña)
-
+def verificar_contra(usuario, contraseña):
+    return usuario[2] == contraseña 

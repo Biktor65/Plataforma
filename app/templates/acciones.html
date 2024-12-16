@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <title>Acciones Comerciales</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index_acciones.css') }}">
 </head>
 <body>
     <div class="container">
         <h1>Acciones Comerciales</h1>
         
 
-        <form action="/acciones" method="POST" class="client-form">
+        <form action="/admin/acciones" method="POST" class="client-form">
             <input type="text" name="descripcion" placeholder="Nombre" required>
             <button type="submit" class="btn">Agregar</button>
         </form>

@@ -2,7 +2,7 @@ let offset = 100;
 const limit = 100
 
 async function cargarMasClientes() {
-    const response = await fetch(`/fetch_clientes_accion_paginated?offset=${offset}&limit=${limit}`);
+    const response = await fetch(`/admin/fetch_clientes_accion_paginated?offset=${offset}&limit=${limit}`);
     const clientes = await response.json();
 
     if (response.ok) {
@@ -51,7 +51,7 @@ function fetchSuggestions() {
 
     // Obtener sugerencias si hay texto de búsqueda
     if (filter.length > 0 && /^\d*$/.test(filter)) {
-        fetch(`/fetch_clientes_accion/${filter}`)
+        fetch(`/admin/fetch_clientes_accion/${filter}`)
             .then(response => response.json())
             .then(data => {
                 suggestions.innerHTML = '';
@@ -87,7 +87,7 @@ function buscarClientes() {
     }
 
     // Realiza la búsqueda solo cuando se presione el botón de buscar
-    fetch(`/fetch_clientes/${codcliente}`)
+    fetch(`/admin/fetch_clientes/${codcliente}`)
         .then(response => response.json())
         .then(data => {
             suggestions.innerHTML = '';
@@ -119,8 +119,7 @@ function filterTable(codigo) {
     const table = document.getElementById("clientesAccionTable");
     const tr = table.getElementsByTagName('tr');
 
-    // Filtrar la tabla
-    for (let i = 1; i < tr.length; i++) {  // Skip the header row
+    for (let i = 1; i < tr.length; i++) {
         const clienteCodigo = tr[i].getElementsByClassName('cliente-codigo')[0].textContent.toLowerCase() || '';
         tr[i].style.display = clienteCodigo.indexOf(codigo.toLowerCase()) > -1 ? "" : "none";
     }
@@ -130,7 +129,7 @@ function fetchClientData() {
     const codcliente = document.getElementById('codcliente').value;
     if (codcliente) {
         // Obtener datos del cliente en la tabla Clientes
-        fetch(`/fetch_cliente/${codcliente}`)
+        fetch(`/admin/fetch_cliente/${codcliente}`)
             .then(response => {
                 if (!response.ok) {
                     alert('El cliente no existe en la tabla Clientes.');

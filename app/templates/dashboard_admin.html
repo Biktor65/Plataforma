@@ -5,48 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-    <title>Dashboard</title>
+    <title>Estadistica Comercial</title>
 
 </head>
 <body>
     <div class="sidebar">
-        <h2>Dashboard</h2>
+        <img src="{{ url_for('static', filename='images/logo.png') }}">
+        <h2>Estadistica Comercial</h2>
         <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Analytics</a></li>
-            <li><a href="#">Reports</a></li>
-            <li><a href="#">Settings</a></li>
+            <li><a href="/auth/admin/dashboard">Inicio</a></li>
+            <li><a href="/admin/acciones">Clientes</a></li>
+            <li><a href="/admin/clientes_accion">Acciones Comerciales</a></li>
+            <li><a href="#">Perfil</a></li>
         </ul>
     </div>
 
     <div class="main-content">
         <div class="header">
-            <h1>Welcome, User</h1>
-            <button>Logout</button>
+            <h1>Bienvenido</h1>
+            <form action="{{ url_for('usuarios.logout') }}" style="display:inline;">
+                <button type="submit">Logout</button>
+            </form>
         </div>
 
         <div class="stats">
-            <div class="card">
-                <h3>Users</h3>
-                <p>1,200</p>
-            </div>
-            <div class="card">
-                <h3>Sales</h3>
-                <p>$45,000</p>
-            </div>
-            <div class="card">
-                <h3>Visits</h3>
-                <p>10,000</p>
-            </div>
+            <a href="/admin/acciones" class="card">
+                <p>Acciones Comerciales</p>
+            </a>
+            <a href="/admin/clientes_accion" class="card">
+                <p>Clientes</p>
+            </a>
         </div>
+        
 
         <div class="chart-container">
-            <h2>Sales Overview</h2>
-            <p>Placeholder for a chart (e.g., using a library like Chart.js).</p>
+            <h2>Estadisticas</h2>
+            <p></p>
         </div>
 
         <div class="footer">
-            <p>&copy; 2024 Dashboard Inc. All rights reserved.</p>
+            <p>&copy; 2024 Todos los derechos reservados.</p>
         </div>
     </div>
 </body>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+
+    <title>Estadistica Comercial</title>
+</head>
+<body>
+    <button class="sidebar-toggle-btn" id="sidebar-toggle-btn">
+        <span>&#9776;</span> 
+    </button>
+    <div class="sidebar" id="sidebar">
+        <img src="{{ url_for('static', filename='images/logo.png') }}">
+        <h2>Estadistica Comercial</h2>
+        <ul>
+            <li><a href="/auth/usuario/dashboard">Inicio</a></li>
+            <li><a href="#">Perfil</a></li>
+            <li><a href="/usuario/promorack">Gestor Promorack</a></li>
+            <li><a href="/usuario/intro_envase">Introducción de Envase</a></li>
+            <li><a href="#">Ayuda</a></li>
+
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Bienvenido</h1>
+            <form action="{{ url_for('usuarios.logout') }}" style="display:inline;">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
+
+        <div class="shortcuts">
+        <h2>Accesos Rápidos</h2>
+            <div class="stats">
+                <a href="/usuario/promorack" class="card">
+                    <p>Promorack</p>
+                </a>
+                <a href="/usuario/intro_envase" class="card">
+                    <p>Envase</p>
+                </a>
+            </div>
+        </div>   
+
+
+
+        <div class="stats">
+            <div class="card">
+                <h3>Mensajes</h3>
+                <p>{{ mensajes_count }}</p>
+            </div>
+            <div class="card">
+                <h3>Eventos</h3>
+                <p>{{ eventos_count }}</p>
+            </div>
+            <div class="card">
+                <h3>Promociones Activas</h3>
+                <p>{{ promociones_count }}</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2024 Todos los derechos reservados.</p>
+        </div>
+    </div>
+    <script type="module" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+</body>
+</html>
+
+

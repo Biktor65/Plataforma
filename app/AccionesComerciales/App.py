@@ -157,7 +157,7 @@ def delete_accion(codaccion):
 
 # CRUD para ClienteAccionComercial
 
-@acciones_clientes.route('/clientes_accion', methods=['GET'])
+@acciones_clientes.route('/clientes_accion', methods=['GET','POST'])
 @login_required
 @role_required('admin')
 def clientes_accion():
@@ -182,11 +182,23 @@ def clientes_accion():
             clientes_accion = cursor.fetchall()
     except Exception as e:
         print(f"Error al obtener datos: {e}")
-
-    return render_template(
-        'clientes_accion.html',
-        acciones_comerciales=acciones_comerciales,
-        clientes_accion=clientes_accion
+    
+    if request.method == 'POST':
+        codcliente = request.form['codcliente']
+        codaccion = request.form['codaccion']
+        try:
+            with pyodbc.connect(conexion_str) as conexion:
+                cursor = conexion.cursor()
+                cursor.execute("SELECT COUNT(*) FROM Clientes WHERE CODCLIENTE = ?", (codcliente,))
+                if cursor.fetchone()[0] == 0:
+                    return render_template('clientes_accion.html', error="El cliente no existe.", clientes_accion=clientes_accion, acciones_comerciales=acciones_comerciales)
+                cursor.execute(""" INSERT INTO ClienteAccionComercial (CODCLIENTE, CODAccionComercial) VALUES (?, ?)""", (codcliente, codaccion))
+                conexion.commit()                
+                return render_template('clientes_accion.html', success="Cliente y acción comercial añadidos correctamente.", clientes_accion=clientes_accion,acciones_comerciales=acciones_comerciales)
+        except Exception as e:
+            print(f"Error al procesar el POST: {e}")
+            return render_template('clientes_accion.html', error="Error al procesar la solicitud.",clientes_accion=clientes_accion, acciones_comerciales=acciones_comerciales)
+    return render_template('clientes_accion.html', acciones_comerciales=acciones_comerciales, clientes_accion=clientes_accion
     )
 
 
@@ -211,9 +223,8 @@ def get_clientes_accion():
 @role_required('admin')
 def fetch_clientes_accion_paginated():
     try:
-        # Obtener los parámetros de paginación
-        limit = int(request.args.get('limit', 100))  # Cantidad de registros a cargar, por defecto 100
-        offset = int(request.args.get('offset', 0))  # Inicio de la carga, por defecto 0
+        limit = int(request.args.get('limit', 100)) 
+        offset = int(request.args.get('offset', 0))  
 
         with pyodbc.connect(conexion_str) as conexion:
             cursor = conexion.cursor()
@@ -228,7 +239,6 @@ def fetch_clientes_accion_paginated():
 
             clientes_accion = cursor.fetchall()
 
-        # Formatear los resultados en JSON
         clientes_data = [
             {
                 'CODCLIENTE': cliente[0],

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Clientes</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index_acciones.css') }}">
 </head>
 <body>
     <div class="container">
@@ -27,7 +27,7 @@
         </div>
 
         <label for="codaccion">Agregar Cliente:</label>
-        <form action="/clientes_accion" method="POST" onsubmit="return validateForm()" class="client-form">
+        <form action="/admin/clientes_accion" method="POST" onsubmit="return validateForm()" class="client-form">
             <div style="display: flex; align-items: center;">
                 <input type="text" id="codcliente" name="codcliente" placeholder="Código Cliente" required>
                 <button type="button" id="buscar-btn" onclick="buscarClientes()">Buscar</button>
@@ -48,7 +48,7 @@
 
         <!-- Formulario para cargar el archivo Excel -->
         <div style="margin: 20px 0;">
-            <form action="/upload_excel" method="POST" enctype="multipart/form-data" id="uploadExcelForm">
+            <form action="/admin/upload_excel" method="POST" enctype="multipart/form-data" id="uploadExcelForm">
                 <label for="excelFile">Cargar clientes desde Excel:</label>
                 <input type="file" name="file" id="excelFile" accept=".xlsx" required>
                 <button type="submit" class="btn btn-blue">Cargar y Procesar</button>

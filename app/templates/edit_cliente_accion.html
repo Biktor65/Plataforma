@@ -9,7 +9,7 @@
 <body>
     <div class="container">
         <h1>Editar Cliente y Acción Comercial</h1>
-        <form action="/clientes_accion/edit/{{ cliente_accion.CODCLIENTE }}/{{ cliente_accion.CODAccionComercial }}" method="POST" class="client-form" onsubmit="return confirmUpdate();">
+        <form action="/admin/clientes_accion/edit/{{ cliente_accion.CODCLIENTE }}/{{ cliente_accion.CODAccionComercial }}" method="POST" class="client-form" onsubmit="return confirmUpdate();">
             <input type="text" name="codcliente" value="{{ cliente_accion.CODCLIENTE }}" required readonly>
 
             <label for="codaccion">Seleccione Acción Comercial:</label>
@@ -22,7 +22,7 @@
             </select>
         
             <button type="submit" class="btn">Actualizar</button>
-            <button type="button" onclick="location.href='/clientes_accion'" class="btn btn-green">Atras</button>
+            <button type="button" onclick="location.href='/admin/clientes_accion'" class="btn btn-green">Atras</button>
         </form>
     </div>
 

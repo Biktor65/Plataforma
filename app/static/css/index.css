@@ -1,3 +1,4 @@
+/* Estilos generales para el cuerpo */
 body {
     font-family: Arial, sans-serif;
     background: url('../images/fondo.png') no-repeat center center fixed;
@@ -8,6 +9,8 @@ body {
     padding: 20px;
     overflow-x: hidden; /* Oculta el desplazamiento horizontal */
 }
+
+/* Contenedor principal */
 .container {
     max-width: 600px;
     width: 100%;
@@ -23,11 +26,14 @@ body {
 .container.active {
     display: block;
 }
+
+/* Títulos */
 h1 {
     color: #333;
     text-align: center;
 }
 
+/* Estilo de formularios */
 select, input, button {
     width: 100%;
     padding: 10px;
@@ -36,9 +42,13 @@ select, input, button {
     border-radius: 4px;
     box-sizing: border-box;
 }
+
+/* Input de solo lectura */
 input[readonly] {
     background-color: #f4f4f9;
 }
+
+/* Estilos de botones */
 button {
     color: #fff;
     background-color: #28a745;
@@ -47,12 +57,14 @@ button {
     padding: 10px;
     border-radius: 4px;
 }
+
 button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
 }
 
-.inicio{
+/* Botón de inicio */
+.inicio {
     color: #fff;
     background-color: #28a745;
     border: none;
@@ -60,6 +72,8 @@ button:disabled {
     padding: 10px;
     border-radius: 4px;
 }
+
+/* Contenedor de listas */
 .list-container {
     width: 100%;
     background: rgba(255, 255, 255, 0.815);
@@ -69,24 +83,31 @@ button:disabled {
     overflow-y: auto;
     max-height: 50vh;
 }
+
+/* Tablas dentro de listas */
 .list-container table {
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed; /* Añadido para eliminar el desplazamiento horizontal */
+    table-layout: fixed; /* Eliminar desplazamiento horizontal */
 }
+
 .list-container th, .list-container td {
     padding: 10px;
     border: 1px solid #ccc;
     text-align: left;
-    word-wrap: break-word; /* Añadido para que el contenido de las celdas no desborde */
+    word-wrap: break-word; /* Prevenir desbordamiento del contenido */
 }
+
 .list-container th {
     background-color: #007BFF;
     color: white;
 }
+
 .total, .precio {
     background-color: #f4f4f9;
 }
+
+/* Alertas */
 .alert {
     display: none;
     margin-top: 20px;
@@ -97,11 +118,13 @@ button:disabled {
     border-radius: 4px;
 }
 
+/* Estilos para las pestañas */
 .tabs {
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
 }
+
 .tabs button {
     padding: 10px 20px;
     border: none;
@@ -111,31 +134,32 @@ button:disabled {
     margin: 0 10px;
     border-radius: 5px;
 }
+
 .tabs button.active {
     background-color: #0056b3;
 }
+
 .tabs button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
 }
 
-
+/* Estilo de etiquetas */
 label {
     display: block;
     margin: 15px 0 5px;
 }
 
-
-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
+/* Estilos de botones adicionales */
 .btn-desactivar {
     background-color: red;
 }
+
 .btn-activar {
     background-color: green;
 }
+
+/* Resultados de acción */
 #resultado, #resultadoCambios {
     text-align: center;
     font-weight: bold;
@@ -143,16 +167,20 @@ button:disabled {
     border-radius: 8px;
     display: none;
 }
+
 .aplica {
     background-color: #d4edda;
     color: #155724;
     border: 1px solid #c3e6cb;
 }
+
 .no-aplica {
     background-color: #f8d7da;
     color: #721c24;
     border: 1px solid #f5c6cb;
 }
+
+/* Resaltado de fondo */
 .highlight-background {
     background-color: #f8d7da !important;
     color: red !important;
@@ -161,6 +189,7 @@ button:disabled {
     border-radius: 4px;
 }
 
+/* Botón de eliminar */
 .remove-button {
     background-color: #FF0000;
     color: white;
@@ -169,21 +198,29 @@ button:disabled {
     padding: 5px 10px;
     border-radius: 4px;
 }
+
 .remove-button:hover {
     background-color: #b30000;
 }
+
+/* Botón de descarga */
 .download-button {
     background-color: #007BFF;
 }
+
 .download-button:hover {
     background-color: #0056b3;
 }
+
+/* Contadores */
 #contadorPromorack, #contadorCambios {
     color: red;
     font-weight: bold;
     display: inline-block;
     margin-left: 10px;
 }
+
+/* Botón de limpiar */
 .clear-button {
     background-color: #FFA500;
     color: white;
@@ -192,10 +229,93 @@ button:disabled {
     padding: 10px;
     border-radius: 4px;
 }
+
 .clear-button:hover {
     background-color: #cc8400;
 }
 
+/* Ruta */
 #ruta {
     margin-bottom: 30px; 
 }
+
+/* Estilos para imágenes */
+img {
+    max-width: 25%;
+    height: auto;
+    display: block;
+    margin: 0 auto; /* Centrado de las imágenes */
+}
+
+/* Consultas de medios para hacer el diseño responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+        max-width: 90%;  /* Cambié 70% a 90% para más espacio */
+        margin: 10px auto; /* Agregué margen para separarlo de los bordes */
+    }
+
+    .list-container {
+        padding: 15px;
+        max-height: 40vh;
+    }
+
+    .tabs button {
+        padding: 8px 16px;
+        margin: 0 5px;
+    }
+
+    img {
+        max-width: 15%;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    select, input, button {
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    #ruta {
+        margin-bottom: 15px;
+    }
+}
+
+/* Estilos para pantallas muy pequeñas */
+@media (max-width: 480px) {
+    .container {
+        padding: 10px !important;
+        max-width: 90%;  /* Cambié 70% a 90% */
+        margin: 10px auto; /* Agregué margen para más separación */
+    }
+
+    .list-container {
+        padding: 10px;
+        max-height: 35vh;
+    }
+
+    .tabs button {
+        padding: 8px 12px;
+        margin: 0 3px;
+    }
+
+    img {
+        max-width: 15%;
+    }
+
+    h1 {
+        font-size: 1.2em;
+    }
+
+    select, input, button {
+        padding: 10px;
+        font-size: 12px;
+    }
+
+    #ruta {
+        margin-bottom: 10px;
+    }
+}
+

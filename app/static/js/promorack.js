@@ -49,7 +49,6 @@ function actualizarContadorClientes() {
     $('#contadorPromorack').text(`: ${contadorClientes}`);
 }
 
-// Define las funciones de manejadores para cada acción
 
 
 

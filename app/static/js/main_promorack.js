@@ -3,7 +3,7 @@ import { loadCambiosData } from './cambios.js';
 
 async function loadData() {
     try {
-        const response = await fetch('/api/promorack');
+        const response = await fetch('/usuario/api/promorack');
         const data = await response.json();
         console.log("Data cargada desde SQL:", data);
 

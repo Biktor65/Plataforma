@@ -22,6 +22,10 @@ def create_app():
     def home():
         if 'usuario_id' not in session:
             return redirect(url_for('usuarios.login'))
-        return render_template('dashboard.html')
+        elif session.get('rol') == 'admin':
+            return redirect(url_for('usuarios.dashboard_admin'))
+        elif session.get('rol') == 'usuario':
+            return redirect(url_for('usuarios.dashboard_usuario'))
+        return redirect(url_for('usuarios.login'))
     
     return app

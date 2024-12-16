@@ -3,6 +3,7 @@ from .models import fetch_data_from_sql
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload, MediaIoBaseUpload
+from app.usuarios.views import login_required, role_required
 import io
 import openpyxl
 import json
@@ -25,10 +26,14 @@ credentials = service_account.Credentials.from_service_account_file(
 drive_service = build('drive', 'v3', credentials=credentials)
 
 @clientes_bp.route('/intro_envase')
+@login_required
+@role_required('usuario')
 def intro_envase():
     return render_template('intro_envase.html')
 
 @clientes_bp.route('/api/clientes', methods=['GET'])
+@login_required
+@role_required('usuario')
 def get_clientes():
     data = fetch_data_from_sql()
     if isinstance(data, str):  # Si hay un error
@@ -36,6 +41,8 @@ def get_clientes():
     return jsonify(data)
 
 @clientes_bp.route('/enviar_formulario', methods=['POST'])
+@login_required
+@role_required('usuario')
 def enviar_formulario():
     # Descargar el archivo de Google Drive
     request_drive = drive_service.files().get_media(fileId=FILE_ID)

@@ -22,7 +22,7 @@ def fetch_data_from_sql():
         FROM Clientes C
         JOIN VentaMensual V ON V.CODCliente = C.CODCliente 
         JOIN Territorios T ON T.CODTerritorio = V.CODTerritorio
-        WHERE T.Zona = '01#Zona Metro' AND V.Año='2024'
+        WHERE T.Zona = 'Norte' AND V.Año='2021'
         """
         
         # Ejecutar consulta y guardar resultados
