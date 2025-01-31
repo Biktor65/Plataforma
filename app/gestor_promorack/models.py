@@ -68,3 +68,60 @@ def fetch_promorack_data_from_sql():
         return clientes
     except Exception as e:
         return f"Error al descargar los datos de SQL: {e}"
+
+def guardar_formulario(data):
+    try:
+        conexion = pyodbc.connect(conexion_string)
+        cursor = conexion.cursor()
+
+        # Inserta en la tabla Formulario
+        consulta_principal = """
+        INSERT INTO Formulario (UsuarioID, Estado, FechaCreacion)
+        OUTPUT INSERTED.FormularioID
+        VALUES (?, 'pending', GETDATE())
+        """
+        cursor.execute(consulta_principal, data['UsuarioID'])
+        formulario_id = cursor.fetchone()[0]
+
+        # Inserta en la tabla FormularioData
+        consulta_detalle = """
+        INSERT INTO FormularioData (FormularioID, Centro, JefeZona, Ruta, CODCliente, NombreCliente, NombreNegocio, Cluster)
+        VALUES (?, ?, ?, ?, ?, ?, ?,?)
+        """
+        for detalle in data['Detalles']:
+            cursor.execute(
+                consulta_detalle,
+                formulario_id,
+                detalle.get('Centro'),
+                detalle.get('JefeZona'),
+                detalle.get('Ruta'),
+                detalle.get('CODCliente'),
+                detalle.get('Nombre_de_Cliente'),
+                detalle.get('Nombre_de_Negocio'),
+                detalle.get('Cluster')
+            )
+
+        conexion.commit()
+        conexion.close()
+        return {"message": "Formulario guardado correctamente"}
+    except Exception as e:
+        return {"error": f"Error al guardar el formulario: {e}"}
+
+def actualizar_estado_formulario(formulario_id, estado):
+    try:
+        conexion = pyodbc.connect(conexion_string)
+        cursor = conexion.cursor()
+
+        # Actualiza el estado en la tabla Formulario
+        consulta = """
+        UPDATE Formulario
+        SET Estado = ?
+        WHERE FormularioID = ?
+        """
+        cursor.execute(consulta, estado, formulario_id)
+
+        conexion.commit()
+        conexion.close()
+        return {"message": "Estado actualizado correctamente"}
+    except Exception as e:
+        return {"error": f"Error al actualizar el estado: {e}"}

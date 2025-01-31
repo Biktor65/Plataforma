@@ -123,25 +123,64 @@ export function vaciarTablaClientesAgregados() {
     $('#contadorPromorack').text(`: 0`);
 }
 
-export function descargarClientesExcel() {
-    if (clientesAgregados.length === 0 ) {
+export async function descargarClientesExcel() {
+    console.log(clientesAgregados);
+
+    if (clientesAgregados.length === 0) {
         alert("No hay clientes agregados para descargar.");
         return;
     }
 
-    const clientesParaExcel = clientesAgregados.map(cliente => {
-        const { DireccionNegocio, ...clienteSinDireccion } = cliente;
-        return clienteSinDireccion;
-    });
+    try {
+        const usuarioResponse = await fetch('/auth/api/get_usuario_id', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        const responseData = await usuarioResponse.json();
+    
+        // Acceder al valor del UsuarioID
+        const UsuarioID = responseData.UsuarioID;
 
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.json_to_sheet(clientesParaExcel);
-    XLSX.utils.book_append_sheet(wb, ws, "Clientes Agregados");
-    XLSX.writeFile(wb, "clientes_agregados.xlsx");
+        const respuesta = await fetch('/usuario/api/promorack/guardar_formulario', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                UsuarioID: UsuarioID,
+                Detalles: clientesAgregados
+            })
+        });
 
-    // Vaciar tabla y reiniciar contador
-    vaciarTablaClientesAgregados();
+        const data = await respuesta.json();
+
+        if (!respuesta.ok) {
+            throw new Error(data.error || 'Hubo un error al guardar los datos en la base de datos');
+        }
+
+        // Si los datos se guardan correctamente, proceder a la descarga del archivo Excel
+        const clientesParaExcel = clientesAgregados.map(cliente => {
+            const { DireccionNegocio, ...clienteSinDireccion } = cliente;
+            return clienteSinDireccion;
+        });
+
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.json_to_sheet(clientesParaExcel);
+        XLSX.utils.book_append_sheet(wb, ws, "Clientes Agregados");
+        XLSX.writeFile(wb, "clientes_agregados.xlsx");
+
+        // Vaciar tabla y reiniciar contador
+        vaciarTablaClientesAgregados();
+    } catch (error) {
+        console.error('Error:', error);
+        alert(error.message);
+    }
 }
+
+
 
 export function incrementarContador() {
     contadorClientes++;
