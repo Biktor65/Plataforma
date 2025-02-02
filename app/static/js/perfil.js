@@ -16,6 +16,7 @@ async function cambiarContraseña() {
     const data = {
         contraseña_actual: contraseñaActual,
         nueva_contraseña: nuevaContraseña,
+        confirmar_contraseña: confirmarContraseña
     };
 
     try {
@@ -31,9 +32,14 @@ async function cambiarContraseña() {
             alert('Contraseña actualizada correctamente.');
             // Cerrar el modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('cambiarContraseñaModal'));
-            modal.hide();
+            if (modal) {
+                modal.hide();
+            }
             // Limpiar el formulario
-            document.getElementById('cambiarContraseñaForm').reset();
+            const form = document.getElementById('cambiarContraseñaForm');
+            if (form) {
+                form.reset();
+            }
         } else {
             const errorData = await response.json();
             alert(`Error al actualizar la contraseña: ${errorData.error || 'Error desconocido'}`);

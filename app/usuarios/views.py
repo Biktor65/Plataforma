@@ -112,11 +112,13 @@ def actualizar_perfil_vista():
             if not usuario or not verificar_contra(usuario, contraseña_actual):
                 return jsonify({"error": "La contraseña actual es incorrecta."}), 400
 
-            if len(data.get("nueva_contraseña")) < 8:
-                return jsonify({"error": "La nueva contraseña debe tener al menos 8 caracteres."}), 400
-
+            # Validar que la nueva contraseña y la confirmación coincidan
             if data.get("nueva_contraseña") != data.get("confirmar_contraseña"):
                 return jsonify({"error": "La nueva contraseña y la confirmación no coinciden."}), 400
+
+            # Validar la longitud de la nueva contraseña
+            if len(data.get("nueva_contraseña")) < 8:
+                return jsonify({"error": "La nueva contraseña debe tener al menos 8 caracteres."}), 400
 
         # Validamos los campos permitidos
         datos_a_actualizar = {}

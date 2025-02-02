@@ -21,7 +21,7 @@ def obtener_usuario_por_id(usuario_id):
     return usuario
 
 def verificar_contra(usuario, contraseña):
-    return usuario[2] == contraseña 
+    return check_password_hash(usuario[2], contraseña)
 
 def obtener_perfil(usuario_id):
     conexion = get_db_connection()

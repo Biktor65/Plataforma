@@ -21,57 +21,47 @@
 </head>
 <body>
     <div class="wrapper">
-        <div class="sidebar" data-background-color="dark">
+        <div class="sidebar sidebar-style-2" data-background-color="dark">
             <div class="sidebar-logo">
-                <!-- Logo Header -->
                 <div class="logo-header" data-background-color="dark">
-
-                    <a href="index.html" class="logo">
-                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="navbar brand" class="navbar-brand" height="20">
+                    <a href="/auth/admin/dashboard" class="logo">
+                        <img src="{{ url_for('static', filename='images/LOGO STAFF.png') }}" alt="navbar brand" class="navbar-brand" height="75">
                     </a>
                     <div class="nav-toggle">
                         <button class="btn btn-toggle toggle-sidebar">
-                           <i class="gg-menu-right"></i>
-                        </button>
-                        <button class="btn btn-toggle sidenav-toggler">
-                            <i class="gg-menu-left"></i>
+                            <i class="gg-menu-right"></i>
                         </button>
                     </div>
-                    <button class="topbar-toggler more">
-                        <i class="gg-more-vertical-alt"></i>
-                    </button>
                 </div>
-            <!-- End Logo Header -->
-             	
-        </div>	
-        <div class="sidebar-wrapper scrollbar scrollbar-inner">
-            <div class="sidebar-content">
-                <ul class="nav nav-secondary">
-                    <li class="nav-item active">
-                        <a href="/auth/admin/dashboard">
-                            <i class="fas fa-home"></i>
-                            <p>Inicio</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/admin/acciones">
-                            <i class="fas fa-layer-group"></i>
-                            <p>Clientes</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/admin/clientes_accion">
-                            <i class="fas fa-pen-square"></i>
-                            <p>Acciones Comerciales</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/auth/perfil">
-                            <i class="fas fa-pen-square"></i>
-                            <p>Perfil</p>
-                        </a>
-                    </li>
-                </ul>
+            </div>
+            <div class="sidebar-wrapper scrollbar scrollbar-inner">
+                <div class="sidebar-content">
+                    <ul class="nav nav-info">
+                        <li class="nav-item active">
+                            <a href="index.html">
+                                <i class="fas fa-home"></i>
+                                <p>Inicio</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/acciones">
+                                <i class="fas fa-layer-group"></i>
+                                <p>Clientes</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/clientes_accion">
+                                <i class="fas fa-pen-square"></i>
+                                <p>Acciones Comerciales</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/auth/perfil">
+                                <i class="fas fa-user"></i>
+                                <p>Perfil</p>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -236,27 +226,67 @@
             </div>
         </nav>
     </div>
-    <div class = "container">
-        <div class = "page-inner">
+    <div class="container">
+        <div class="page-inner">
+            <!-- Título y Subtítulo -->
             <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
                 <div>
                     <h3 class="fw-bold mb-3">Inicio</h3>
-                    <h6 class="op-7 mb-2">Free Bootstrap 5 Admin Dashboard</h6>
+                    <h6 class="op-7 mb-2">Bienvenido al panel de administración</h6>
                 </div>
             </div>
-            <div class="stats">
-                <a href="/admin/acciones" class="card">
-                    <p>Acciones Comerciales</p>
-                </a>
-                <a href="/admin/clientes_accion" class="card">
-                    <p>Clientes</p>
-                </a>
+    
+            <!-- Tarjetas de Estadísticas -->
+            <div class="stats row">
+                <div class="col-md-6">
+                    <a href="/admin/acciones" class="card card-stats card-round">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-5">
+                                    <div class="icon-big text-center">
+                                        <i class="fas fa-chart-line text-primary"></i>
+                                    </div>
+                                </div>
+                                <div class="col-7 col-stats">
+                                    <div class="numbers">
+                                        <p class="card-category">Acciones Comerciales</p>
+                                        <h4 class="card-title">Ver más</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="/admin/clientes_accion" class="card card-stats card-round">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-5">
+                                    <div class="icon-big text-center">
+                                        <i class="fas fa-users text-success"></i>
+                                    </div>
+                                </div>
+                                <div class="col-7 col-stats">
+                                    <div class="numbers">
+                                        <p class="card-category">Clientes</p>
+                                        <h4 class="card-title">Ver más</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
             </div>
-        
-
-            <div class="chart-container">
-                <h2>Estadisticas</h2>
-                <p></p>
+    
+            <!-- Gráfico -->
+            <div class="chart-container card">
+                <div class="card-header">
+                    <h2 class="card-title">Estadísticas</h2>
+                    <p class="card-category">Resumen de actividades recientes</p>
+                </div>
+                <div class="card-body">
+                    <canvas id="myChart" style="height: 300px;"></canvas>
+                </div>
             </div>
         </div>
     </div>
