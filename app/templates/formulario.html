@@ -51,7 +51,7 @@
                         </li>
                         <li class="nav-item">
                             <a href="/admin/clientes_accion">
-                                <i class="fas fa-chart-line"></i>
+                                <i class="fas fa-pen-square"></i>
                                 <p>Acciones Comerciales</p>
                             </a>
                         </li>
@@ -59,12 +59,6 @@
                             <a href="/auth/perfil">
                                 <i class="fas fa-user"></i>
                                 <p>Perfil</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/admin/formularios">
-                                <i class="fas fa-pen-square"></i>
-                                <p>Formulario</p>
                             </a>
                         </li>
                     </ul>
@@ -234,64 +228,76 @@
     </div>
     <div class="container">
         <div class="page-inner">
-            <!-- Título y Subtítulo -->
-            <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
-                <div>
-                    <h3 class="fw-bold mb-3">Inicio</h3>
-                    <h6 class="op-7 mb-2">Bienvenido al panel de administración</h6>
-                </div>
-            </div>
-    
-            <!-- Tarjetas de Estadísticas -->
-            <div class="stats row">
-                <div class="col-md-6">
-                    <a href="/admin/acciones" class="card card-stats card-round">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-5">
-                                    <div class="icon-big text-center">
-                                        <i class="fas fa-chart-line text-primary"></i>
-                                    </div>
-                                </div>
-                                <div class="col-7 col-stats">
-                                    <div class="numbers">
-                                        <p class="card-category">Acciones Comerciales</p>
-                                        <h4 class="card-title">Ver más</h4>
-                                    </div>
-                                </div>
+            <table id="formulariosTable" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>FormularioID</th>
+                        <th>Estado</th>
+                        <th>FechaCreacion</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if formularios %}
+                        {% for formulario in formularios %}
+                        <tr>
+                            <td>{{ formulario.Usuario }}</td>
+                            <td>{{ formulario.FormularioID }}</td>
+                            <td>{{ formulario.Estado }}</td>
+                            <td>{{ formulario.FechaCreacion }}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick="editarFormulario('{{ formulario.FormularioID }}')">Editar</button>
+                                <button class="btn btn-success btn-sm" onclick="aprobarFormulario('{{ formulario.FormularioID }}')">Aprobar</button>
+                                <button class="btn btn-info btn-sm" onclick="descargarFormulario('{{ formulario.FormularioID }}')">Descargar</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center">No hay formularios disponibles.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        <div class="modal fade" id="editarFormularioModal" tabindex="-1" aria-labelledby="editarFormularioModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editarFormularioModalLabel">Editar Formulario</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editarFormularioForm">
+                            <!-- Campos de solo lectura (Formulario) -->
+                            <div class="mb-3">
+                                <label for="formularioID" class="form-label">Formulario ID</label>
+                                <input type="text" class="form-control" id="formularioID" name="formularioID" readonly>
                             </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-6">
-                    <a href="/admin/clientes_accion" class="card card-stats card-round">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-5">
-                                    <div class="icon-big text-center">
-                                        <i class="fas fa-users text-success"></i>
-                                    </div>
-                                </div>
-                                <div class="col-7 col-stats">
-                                    <div class="numbers">
-                                        <p class="card-category">Clientes</p>
-                                        <h4 class="card-title">Ver más</h4>
-                                    </div>
-                                </div>
+                            <div class="mb-3">
+                                <label for="usuarioID" class="form-label">Usuario ID</label>
+                                <input type="text" class="form-control" id="usuarioID" name="usuarioID" readonly>
                             </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
+                            <div class="mb-3">
+                                <label for="estado" class="form-label">Estado</label>
+                                <input type="text" class="form-control" id="estado" name="estado" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="fechaCreacion" class="form-label">Fecha de Creación</label>
+                                <input type="text" class="form-control" id="fechaCreacion" name="fechaCreacion" readonly>
+                            </div>
     
-            <!-- Gráfico -->
-            <div class="chart-container card">
-                <div class="card-header">
-                    <h2 class="card-title">Estadísticas</h2>
-                    <p class="card-category">Resumen de actividades recientes</p>
-                </div>
-                <div class="card-body">
-                    <canvas id="myChart" style="height: 300px;"></canvas>
+                            <!-- Campos editables (FormularioData) -->
+                            <div id="detallesFormulario">
+                                <!-- Los detalles del formulario se cargarán aquí dinámicamente -->
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="guardarCambios()">Guardar Cambios</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -299,12 +305,8 @@
     <div class="footer">
         <p>&copy; 2024 Todos los derechos reservados.</p>
     </div>
-    </div>
-
-
 </div>
-
-
+</div>
     <script src="{{ url_for('static', filename= 'js/js/core/jquery-3.7.1.min.js')}}"></script>
 	<script src="{{ url_for('static', filename= 'js/js/core/popper.min.js')}}"></script>
 	<script src="{{ url_for('static', filename= 'js/js/core/bootstrap.min.js')}}"></script>
@@ -316,7 +318,6 @@
 	<script src="{{ url_for('static', filename= 'js/js/plugin/bootstrap-notify/bootstrap-notify.min.js')}}"></script>
 	<script src="{{ url_for('static', filename= 'js/js/plugin/sweetalert/sweetalert.min.js')}}"></script>
 	<script src="{{ url_for('static', filename= 'js/js/kaiadmin.min.js')}}"></script>
-
-
+    <script src="{{ url_for('static', filename= 'js/formulario.js')}}"></script>
 </body>
 </html>
