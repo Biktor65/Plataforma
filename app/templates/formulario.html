@@ -232,9 +232,9 @@
                 <thead>
                     <tr>
                         <th>Usuario</th>
-                        <th>FormularioID</th>
+                        <th>Codigo</th>
                         <th>Estado</th>
-                        <th>FechaCreacion</th>
+                        <th>Fecha Creacion</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -261,46 +261,55 @@
                 </tbody>
             </table>
         </div>
-        <div class="modal fade" id="editarFormularioModal" tabindex="-1" aria-labelledby="editarFormularioModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editarFormularioModalLabel">Editar Formulario</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- Modal para Editar Formulario -->
+<div class="modal fade" id="editarFormularioModal" tabindex="-1" aria-labelledby="editarFormularioModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <!-- Encabezado del Modal -->
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="editarFormularioModalLabel">
+                    <i class="fas fa-edit me-2"></i> Editar Detalles del Formulario
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Cuerpo del Modal -->
+            <div class="modal-body">
+                <form id="editarFormularioForm">
+                    <!-- Tabla para los detalles del formulario -->
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered">
+                            <thead class="thead-light">
+                                <tr class="text-center">
+                                    <th>Centro</th>
+                                    <th>Jefe Zona</th>
+                                    <th>Ruta</th>
+                                    <th>Código Cliente</th>
+                                    <th>Nombre Cliente</th>
+                                    <th>Nombre Negocio</th>
+                                    <th>Cluster</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaDetalles">
+                                <!-- Las filas se cargarán dinámicamente aquí -->
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="modal-body">
-                        <form id="editarFormularioForm">
-                            <!-- Campos de solo lectura (Formulario) -->
-                            <div class="mb-3">
-                                <label for="formularioID" class="form-label">Formulario ID</label>
-                                <input type="text" class="form-control" id="formularioID" name="formularioID" readonly>
-                            </div>
-                            <div class="mb-3">
-                                <label for="usuarioID" class="form-label">Usuario ID</label>
-                                <input type="text" class="form-control" id="usuarioID" name="usuarioID" readonly>
-                            </div>
-                            <div class="mb-3">
-                                <label for="estado" class="form-label">Estado</label>
-                                <input type="text" class="form-control" id="estado" name="estado" readonly>
-                            </div>
-                            <div class="mb-3">
-                                <label for="fechaCreacion" class="form-label">Fecha de Creación</label>
-                                <input type="text" class="form-control" id="fechaCreacion" name="fechaCreacion" readonly>
-                            </div>
-    
-                            <!-- Campos editables (FormularioData) -->
-                            <div id="detallesFormulario">
-                                <!-- Los detalles del formulario se cargarán aquí dinámicamente -->
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-primary" onclick="guardarCambios()">Guardar Cambios</button>
-                    </div>
-                </div>
+                </form>
+            </div>
+
+            <!-- Pie del Modal -->
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i> Cerrar
+                </button>
+                <button type="button" class="btn btn-primary" onclick="guardarCambios()">
+                    <i class="fas fa-save me-2"></i> Guardar Cambios
+                </button>
             </div>
         </div>
+    </div>
+</div>
     </div>
     <div class="footer">
         <p>&copy; 2024 Todos los derechos reservados.</p>

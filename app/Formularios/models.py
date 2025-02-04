@@ -93,10 +93,10 @@ def actualizar_estado_formulario(formulario_id, estado):
         return {"error": f"Error al actualizar el estado: {str(e)}"}
     
 def actualizar_detalles_formulario(formulario_id, detalles):
+
     try:
         with pyodbc.connect(conexion_string) as conexion:
             cursor = conexion.cursor()
-
             for detalle in detalles:
                 consulta = """
                 UPDATE FormularioData
@@ -104,21 +104,16 @@ def actualizar_detalles_formulario(formulario_id, detalles):
                 WHERE DetalleID = ? AND FormularioID = ?
                 """
                 cursor.execute(consulta, 
-                    detalle['Centro'],
-                    detalle['JefeZona'],
-                    detalle['Ruta'],
-                    detalle['CODCliente'],
-                    detalle['NombreCliente'],
-                    detalle['NombreNegocio'],
-                    detalle['Cluster'],
-                    detalle['DetalleID'],
-                    formulario_id
+                    detalle['Centro'], detalle['JefeZona'], detalle['Ruta'], 
+                    detalle['CODCliente'], detalle['NombreCliente'], 
+                    detalle['NombreNegocio'], detalle['Cluster'], 
+                    detalle['DetalleID'], formulario_id
                 )
-
             conexion.commit()
-            return {"message": "Detalles del formulario actualizados correctamente"}
+        return {"message": "Detalles del formulario actualizados correctamente"}
     except Exception as e:
-        return {"error": f"Error al actualizar los detalles del formulario: {str(e)}"}    
+        return {"error": f"Error al actualizar los detalles del formulario: {str(e)}"}
+  
 
 def fetch_formulario_por_id(formulario_id):
     try:
@@ -176,3 +171,50 @@ def fetch_formulario_por_id(formulario_id):
             return formulario_dict
     except Exception as e:
         return {"error": f"Error al obtener el formulario: {str(e)}"}
+
+def eliminar_detalles_formulario(detalle_ids):
+
+    try:
+        if not detalle_ids:
+            return {"message": "No hay registros para eliminar"}
+        
+        consulta_eliminar = "DELETE FROM FormularioData WHERE DetalleID IN ({})".format(
+            ",".join("?" * len(detalle_ids))
+        )
+        
+        with pyodbc.connect(conexion_string) as conexion:
+            cursor = conexion.cursor()
+            cursor.execute(consulta_eliminar, tuple(detalle_ids))
+            conexion.commit()
+            
+        return {"message": "Registros eliminados correctamente"}
+    except Exception as e:
+        return {"error": f"Error al eliminar los registros: {str(e)}"}
+    
+def eliminar_formulario_si_vacio(formulario_id):
+    try:
+        with pyodbc.connect(conexion_string) as conexion:
+            cursor = conexion.cursor()
+
+            # Verificar si el formulario tiene registros asociados en FormularioData
+            consulta_verificar = """
+                SELECT COUNT(*) AS total
+                FROM FormularioData
+                WHERE FormularioID = ?
+            """
+            cursor.execute(consulta_verificar, formulario_id)
+            total_registros = cursor.fetchone().total
+
+            # Si no hay registros, eliminar el formulario
+            if total_registros == 0:
+                consulta_eliminar = """
+                    DELETE FROM Formulario
+                    WHERE FormularioID = ?
+                """
+                cursor.execute(consulta_eliminar, formulario_id)
+                conexion.commit()
+                return {"message": "Formulario eliminado porque no tiene registros asociados"}
+
+            return {"message": "El formulario aún tiene registros asociados"}
+    except Exception as e:
+        return {"error": f"Error al verificar y eliminar el formulario: {str(e)}"}

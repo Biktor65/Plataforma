@@ -6910,4 +6910,9 @@ body {
   .wrapper.not-found .desc {
     font-size: 18px !important; } }
 
+    .fila-eliminada {
+      opacity: 0.5;
+      text-decoration: line-through;
+      background-color: #ffcccc;
+  }
 /*# sourceMappingURL=kaiadmin.css.map */

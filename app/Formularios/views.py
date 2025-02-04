@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, jsonify, request
-from .models import fetch_formularios, guardar_formulario, actualizar_estado_formulario,actualizar_detalles_formulario, fetch_formulario_por_id
+from .models import fetch_formularios, guardar_formulario, actualizar_estado_formulario,actualizar_detalles_formulario, fetch_formulario_por_id, eliminar_detalles_formulario, eliminar_formulario_si_vacio
 from app.usuarios.views import login_required, role_required
 
 # Crear un Blueprint para las rutas de formularios
@@ -24,7 +24,6 @@ def listar_formularios():
 @login_required
 @role_required('admin') 
 def enviar_formulario():
-    """Guarda un nuevo formulario."""
     try:
         data = request.get_json()
         if not data:
@@ -63,12 +62,23 @@ def actualizar_estado(formulario_id):
 def actualizar_formulario(formulario_id):
     try:
         data = request.get_json()
-        if not data or "Detalles" not in data:
+        if not data or "Detalles" not in data or "Eliminaciones" not in data:
             return jsonify({"error": "Datos incompletos"}), 400
 
-        resultado = actualizar_detalles_formulario(formulario_id, data["Detalles"])  # Implementa esta función en models.py
-        if "error" in resultado:
-            return jsonify({"error": resultado["error"]}), 500
+        # Actualizar los registros editados
+        resultado_actualizacion = actualizar_detalles_formulario(formulario_id, data["Detalles"])
+        if "error" in resultado_actualizacion:
+            return jsonify(resultado_actualizacion), 500
+
+        # Eliminar los registros en la cola de eliminación
+        resultado_eliminacion = eliminar_detalles_formulario(data["Eliminaciones"])
+        if "error" in resultado_eliminacion:
+            return jsonify(resultado_eliminacion), 500
+        
+        resultado_verificacion = eliminar_formulario_si_vacio(formulario_id)
+        if "error" in resultado_verificacion:
+            return jsonify(resultado_verificacion), 500
+
         return jsonify({"message": "Formulario actualizado correctamente"}), 200
     except Exception as e:
         return jsonify({"error": f"Error al actualizar el formulario: {str(e)}"}), 500

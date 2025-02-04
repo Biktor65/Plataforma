@@ -1,0 +1,22 @@
+import pandas as pd
+from sqlalchemy import create_engine
+
+# Configuración de conexión a SQL Server
+server = 'Ombo\\SQLEXPRESS'  # Doble barra invertida para evitar errores
+database = 'Estadistica'
+driver = 'ODBC Driver 17 for SQL Server'
+
+# Crear la cadena de conexión para autenticación de Windows (Trusted_Connection)
+conn_str = f'mssql+pyodbc://@{server}/{database}?driver={driver}&trusted_connection=yes'
+
+# Crear el motor de conexión
+engine = create_engine(conn_str)
+
+# Cargar el archivo Excel
+excel_path = r"C:\Users\victo\Downloads\Promorack2024.xlsx"
+df = pd.read_excel(excel_path)
+
+# Insertar datos en la tabla
+df.to_sql("Promorack2024", con=engine, if_exists="append", index=False)
+
+print("Datos importados con éxito.")
