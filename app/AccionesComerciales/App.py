@@ -1,5 +1,6 @@
-from flask import request, jsonify, Blueprint,render_template,redirect, url_for, jsonify
+from flask import request, jsonify, Blueprint,render_template,redirect, url_for, jsonify, session
 from app.usuarios.views import login_required,role_required
+from app.usuarios.models import obtener_usuario_por_id
 import pyodbc
 import pandas as pd
 import os
@@ -104,30 +105,53 @@ def procesar_excel(filepath):
 @login_required
 @role_required('admin')
 def cargar_acciones():
-    if request.method == 'POST':
-        descripcion = request.form['descripcion']
-        
+    try:
+        usuario_id = session.get('usuario_id')
+        usuario = obtener_usuario_por_id(usuario_id)
+
+        if usuario:
+            datos_usuario = {
+                "nombre": usuario[1],  # Columna 'usuario'
+                "rol": usuario[3]  # Columna 'rol'
+            }
+        else:
+            datos_usuario = {
+                "nombre": "Desconocido",
+                "rol": "Sin Rol"
+            }
+
+        if request.method == 'POST':
+            descripcion = request.form['descripcion']
+            
+            with pyodbc.connect(conexion_str) as conexion:
+                cursor = conexion.cursor()
+                try:
+                    cursor.execute("SELECT MAX(CODAccionComercial) FROM AccionesComerciales")
+                    max_codigo = cursor.fetchone()[0]
+                    nuevo_codigo = max_codigo + 1 if max_codigo is not None else 1
+                    
+                    cursor.execute(
+                        "INSERT INTO AccionesComerciales (CODAccionComercial, Descripcion) VALUES (?, ?)",
+                        (nuevo_codigo, descripcion)
+                    )
+                    conexion.commit()
+                except Exception as e:
+                    print(f"Error al insertar acción comercial: {e}")
+                    return redirect(url_for('acciones_clientes.cargar_acciones'))
+
+            return redirect(url_for('acciones_clientes.cargar_acciones'))
+
         with pyodbc.connect(conexion_str) as conexion:
             cursor = conexion.cursor()
-            try:
-                cursor.execute("SELECT MAX(CODAccionComercial) FROM AccionesComerciales")
-                max_codigo = cursor.fetchone()[0]
-                nuevo_codigo = max_codigo + 1 if max_codigo is not None else 1
-                
-                cursor.execute("INSERT INTO AccionesComerciales (CODAccionComercial, Descripcion) VALUES (?, ?)", (nuevo_codigo, descripcion))
-                conexion.commit()
-            except Exception as e:
-                print(f"Error al insertar acción comercial: {e}")
-                return redirect(url_for('acciones_clientes.cargar_acciones'))
-        
-        return redirect(url_for('acciones_clientes.cargar_acciones'))
+            cursor.execute("SELECT * FROM AccionesComerciales")
+            acciones = cursor.fetchall()
 
-    with pyodbc.connect(conexion_str) as conexion:
-        cursor = conexion.cursor()
-        cursor.execute("SELECT * FROM AccionesComerciales")
-        acciones = cursor.fetchall()
-    
-    return render_template('acciones.html', acciones=acciones)
+        return render_template('acciones.html', acciones=acciones, usuario=datos_usuario)
+
+    except Exception as e:
+        print("Error en cargar_acciones:", str(e))
+        return render_template('acciones.html', acciones=[], usuario={"nombre": "Desconocido", "rol": "Sin Rol"})
+
 
 @acciones_clientes.route('/acciones/edit/<int:codaccion>', methods=['GET', 'POST'])
 @login_required
