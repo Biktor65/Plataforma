@@ -218,3 +218,23 @@ def eliminar_formulario_si_vacio(formulario_id):
             return {"message": "El formulario aún tiene registros asociados"}
     except Exception as e:
         return {"error": f"Error al verificar y eliminar el formulario: {str(e)}"}
+
+def fetch_formularios_por_fecha():
+    try:
+        with pyodbc.connect(conexion_string) as conexion:
+            cursor = conexion.cursor()
+            consulta = """
+                SELECT 
+                    FORMAT(FechaCreacion, 'yyyy-MM-dd') AS Fecha,
+                    COUNT(*) AS Total
+                FROM Formulario
+                GROUP BY FORMAT(FechaCreacion, 'yyyy-MM-dd')
+                ORDER BY Fecha ASC
+            """
+            cursor.execute(consulta)
+            filas = cursor.fetchall()
+
+            datos = [{"fecha": fila.Fecha, "total": fila.Total} for fila in filas]
+            return datos
+    except Exception as e:
+        return {"error": f"Error al obtener formularios por fecha: {str(e)}"}

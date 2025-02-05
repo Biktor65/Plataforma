@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, jsonify, request
-from .models import fetch_formularios, guardar_formulario, actualizar_estado_formulario,actualizar_detalles_formulario, fetch_formulario_por_id, eliminar_detalles_formulario, eliminar_formulario_si_vacio
+from .models import fetch_formularios, guardar_formulario, actualizar_estado_formulario,fetch_formularios_por_fecha
+from .models import actualizar_detalles_formulario, fetch_formulario_por_id, eliminar_detalles_formulario, eliminar_formulario_si_vacio
+from datetime import datetime, timedelta
 from app.usuarios.views import login_required, role_required
 
 # Crear un Blueprint para las rutas de formularios
@@ -94,3 +96,68 @@ def obtener_formulario(formulario_id):
         return jsonify(formulario), 200
     except Exception as e:
         return jsonify({"error": f"Error al obtener el formulario: {str(e)}"}), 500
+    
+@formularios_bp.route('/api/formularios_por_fecha', methods=['GET'])
+@login_required
+@role_required('admin')
+def obtener_formularios_por_fecha():
+    try:
+        resultados = fetch_formularios_por_fecha()
+        return jsonify(resultados), 200
+    except Exception as e:
+        return jsonify({"error": f"Error al obtener datos del gráfico: {str(e)}"}), 500
+    
+
+@formularios_bp.route('/api/formularios_diarios', methods=['GET'])
+@login_required
+@role_required('admin')
+def obtener_formularios_diarios():
+    try:
+        # Obtener todos los formularios
+        formularios = fetch_formularios()
+
+        # Si hubo un error en la consulta
+        if "error" in formularios:
+            return jsonify({"error": formularios["error"]}), 500
+
+        # Obtener fechas de hoy y ayer
+        hoy = datetime.now().date()
+        ayer = hoy - timedelta(days=1)
+
+        # Filtrar formularios por fecha
+        formularios_hoy = sum(1 for f in formularios if f["FechaCreacion"].date() == hoy)
+        formularios_ayer = sum(1 for f in formularios if f["FechaCreacion"].date() == ayer)
+
+        # Calcular porcentaje de cambio
+        porcentaje = ((formularios_hoy - formularios_ayer) / formularios_ayer * 100) if formularios_ayer > 0 else (100 if formularios_hoy > 0 else 0)
+
+        return jsonify({
+            "hoy": formularios_hoy,
+            "ayer": formularios_ayer,
+            "porcentaje": round(porcentaje, 2)
+        }), 200
+    except Exception as e:
+        return jsonify({"error": f"Error al obtener estadísticas diarias: {str(e)}"}), 500
+    
+@formularios_bp.route('/api/comparacion_aprobados', methods=['GET'])
+@login_required
+@role_required('admin')
+def obtener_comparacion_aprobados():
+    try:
+        # Obtener todos los formularios desde la base de datos
+        formularios = fetch_formularios()
+
+        # Si hubo un error en la consulta
+        if "error" in formularios:
+            return jsonify({"error": formularios["error"]}), 500
+
+        # Contadores
+        aprobados = sum(1 for f in formularios if f["Estado"] == "Aprobado")
+        pendientes = sum(1 for f in formularios if f["Estado"] == "pending")
+
+        return jsonify({
+            "Aprobados": aprobados,
+            "Pendientes": pendientes
+        }), 200
+    except Exception as e:
+        return jsonify({"error": f"Error al obtener datos comparativos: {str(e)}"}), 500

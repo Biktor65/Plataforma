@@ -1,3 +1,134 @@
+document.addEventListener("DOMContentLoaded", function () {
+    obtenerFormulariosDiarios();
+    cargarGraficoFormularios();
+    cargarGraficoComparacionAprobados(); 
+});
+
+function cargarGraficoComparacionAprobados() {
+    fetch('/admin/api/comparacion_aprobados')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error("Error al cargar datos:", data.error);
+                return;
+            }
+
+            const ctx = document.getElementById('chartAprobadosPendientes').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Aprobados', 'Pendientes'],
+                    datasets: [{
+                        label: 'Cantidad de Formularios',
+                        data: [data.Aprobados, data.Pendientes],
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.7)',  // Aprobados (verde)
+                            'rgba(255, 159, 64, 0.7)'   // Pendientes (naranja)
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Cantidad'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Estado'
+                            }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error("Error al obtener datos:", error));
+}
+
+function obtenerFormulariosDiarios() {
+    fetch('/admin/api/formularios_diarios')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error("Error al cargar datos:", data.error);
+                return;
+            }
+
+            document.getElementById("formulariosHoy").textContent = data.hoy;
+
+            let porcentaje = data.porcentaje;
+            let porcentajeDiv = document.getElementById("porcentajeCambio");
+            
+            if (porcentaje > 0) {
+                porcentajeDiv.classList.add("text-success");
+                porcentajeDiv.classList.remove("text-danger");
+                porcentajeDiv.innerHTML = `<i class="fa fa-chevron-up"></i> +${porcentaje}%`;
+            } else if (porcentaje < 0) {
+                porcentajeDiv.classList.add("text-danger");
+                porcentajeDiv.classList.remove("text-success");
+                porcentajeDiv.innerHTML = `<i class="fa fa-chevron-down"></i> ${porcentaje}%`;
+            } else {
+                porcentajeDiv.classList.remove("text-success", "text-danger");
+                porcentajeDiv.innerHTML = `0%`;
+            }
+        })
+        .catch(error => console.error("Error al obtener datos:", error));
+}
+
+function cargarGraficoFormularios() {
+    fetch('/admin/api/formularios_por_fecha')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error("Error al cargar datos:", data.error);
+                return;
+            }
+
+            const labels = data.map(item => item.fecha);
+            const valores = data.map(item => item.total);
+
+            const ctx = document.getElementById('myChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Formularios Enviados',
+                        data: valores,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderWidth: 2,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { title: { display: true, text: 'Fecha' } },
+                        y: { title: { display: true, text: 'Total Formularios' }, beginAtZero: true }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error("Error al obtener datos:", error));
+}
+
+
+
 function editarFormulario(formularioID) {
     window.location.href = `/admin/formularios/editar/${formularioID}`;
 }
@@ -204,3 +335,4 @@ function eliminarFila(icono) {
     filasParaEliminar.push(detalleID); 
     fila.classList.add("fila-eliminada"); 
 }
+

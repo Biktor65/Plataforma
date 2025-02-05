@@ -6915,4 +6915,277 @@ body {
       text-decoration: line-through;
       background-color: #ffcccc;
   }
-/*# sourceMappingURL=kaiadmin.css.map */
+
+  .dropdown-menu.dropdown-user {
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 0;
+}
+
+.dropdown-user-scroll {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.user-box {
+    background-color: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+    padding: 15px;
+}
+
+.dropdown-item {
+    padding: 10px 15px;
+    color: #333;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+.dropdown-item i {
+    width: 20px;
+    text-align: center;
+    margin-right: 10px;
+}
+
+.dropdown-divider {
+    margin: 5px 0;
+}
+
+/* Estilo para el ícono de usuario en el navbar */
+.profile-pic {
+    display: flex;
+    align-items: center;
+    color: #333;
+    text-decoration: none;
+}
+
+.profile-pic i {
+    font-size: 1.2rem;
+}
+
+/* Estilo para el texto de logout */
+.text-danger {
+    color: #dc3545 !important;
+}
+
+.text-danger:hover {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+}
+
+/* Modo oscuro */
+body.dark-mode {
+  background-color: #181a23;
+  color: #e4e4e4;
+}
+
+body.dark-mode .navbar {
+  background-color: #222531;
+  border-bottom: 1px solid #2a2f5b;
+}
+
+body.dark-mode .navbar .nav-link {
+  color: #ffffff;
+}
+
+body.dark-mode .navbar .nav-link:hover {
+  color: #48ABF7;
+}
+
+body.dark-mode .sidebar {
+  background-color: #202431;
+  color: #e4e4e4;
+}
+
+body.dark-mode .sidebar a {
+  color: #e4e4e4;
+}
+
+body.dark-mode .sidebar a:hover {
+  color: #38bdf8;
+}
+
+body.dark-mode .card {
+  background-color: #252a3a;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+body.dark-mode .card-header {
+  background-color: #2d3245;
+  color: #ffffff;
+}
+
+body.dark-mode .card-body {
+  background-color: #222839;
+  color: #ffffff;
+}
+
+body.dark-mode .card-title {
+  color: #ffffff;
+}
+
+body.dark-mode .card-sub {
+  color: #b9babf;
+}
+
+body.dark-mode .btn-primary {
+  background-color: #1572E8;
+  border-color: #1572E8;
+}
+
+body.dark-mode .btn-primary:hover {
+  background-color: #1269DB;
+  border-color: #1269DB;
+}
+
+body.dark-mode .btn-secondary {
+  background-color: #2a2f5b;
+  color: #ffffff;
+}
+
+body.dark-mode .btn-secondary:hover {
+  background-color: #48ABF7;
+}
+
+body.dark-mode .form-control {
+  background-color: #2a2f5b;
+  border-color: #2a2f5b;
+  color: #ffffff;
+}
+
+body.dark-mode .form-control:focus {
+  background-color: #2a2f5b;
+  border-color: #48ABF7;
+  color: #ffffff;
+}
+
+body.dark-mode .input-group-text {
+  background-color: #2a2f5b;
+  border-color: #2a2f5b;
+  color: #ffffff;
+}
+
+body.dark-mode .table {
+  background-color: #2a2e3e;
+  color: #e4e4e4;
+}
+
+body.dark-mode .table th {
+  background-color: #2a2e3e;
+  color: #ffffff;
+}
+
+body.dark-mode .table td {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+body.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+  background-color: #2a2f5b;
+}
+
+body.dark-mode .footer {
+  background-color: #222531;
+  color: #e4e4e4;
+  text-align: center;
+  padding: 10px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+body.dark-mode .icon {
+  color: #48ABF7;
+}
+
+body.dark-mode .dropdown-menu {
+  background-color: #202940;
+  border-color: #2a2f5b;
+}
+
+body.dark-mode .dropdown-item {
+  color: #ffffff;
+}
+
+body.dark-mode .dropdown-item:hover {
+  background-color: #2a2f5b;
+  color: #48ABF7;
+}
+
+body.dark-mode .badge {
+  background-color: #48ABF7;
+  color: #ffffff;
+}
+
+body.dark-mode .badge-primary {
+  background-color: #1572E8;
+}
+
+body.dark-mode .badge-secondary {
+  background-color: #6861CE;
+}
+
+body.dark-mode .badge-info {
+  background-color: #48ABF7;
+}
+
+body.dark-mode .badge-success {
+  background-color: #31CE36;
+}
+
+body.dark-mode .badge-warning {
+  background-color: #FFAD46;
+}
+
+body.dark-mode .badge-danger {
+  background-color: #F25961;
+}
+
+body.dark-mode {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.daily-forms-card {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  color: #333333;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode .daily-forms-card {
+  background-color: #252a3a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e4e4e4;
+}
+
+body.dark-mode #formulariosHoy {
+  color: #ffffff;
+}
+
+body.dark-mode #cambioPorcentaje {
+  color: #ffffff;
+}
+
+body.dark-mode .daily-forms-card .fa-chevron-up {
+  color: #31CE36;
+}
+
+body.dark-mode .daily-forms-card .fa-chevron-down {
+  color: #F25961; 
+}
+
+body.dark-mode .text-muted {
+  color: #b9babf !important;
+}
+
+body.dark-mode .text-white {
+  color: #ffffff !important;
+}
+
+body.dark-mode .navbar,
+body.dark-mode .card,
+body.dark-mode .form-control,
+body.dark-mode .btn-primary,
+body.dark-mode .dropdown-menu,
+body.dark-mode .table,
+body.dark-mode .badge {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}

@@ -52,7 +52,21 @@ def unauthorized():
 @login_required
 @role_required('admin')
 def dashboard_admin():
-    return render_template('dashboard_admin.html')
+    usuario_id = session.get('usuario_id')
+    usuario = obtener_usuario_por_id(usuario_id)
+
+    if usuario:
+        datos_usuario = {
+            "nombre": usuario[1],  # Columna 'usuario'
+            "rol": usuario[3]  # Columna 'rol'
+        }
+    else:
+        datos_usuario = {
+            "nombre": "Desconocido",
+            "rol": "Sin Rol"
+        }
+
+    return render_template('dashboard_admin.html', usuario=datos_usuario)
 
 @usuarios_bp.route('/usuario/dashboard')
 @login_required
