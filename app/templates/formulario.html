@@ -21,37 +21,43 @@
 </head>
 <body>
     <div class="wrapper">
-        <div class="sidebar sidebar-style-2" data-background-color="dark">
+        <div class="sidebar sidebar-style-2" data-background-color="dark2">
             <div class="sidebar-logo">
-                <div class="logo-header" data-background-color="dark">
+                <div class="logo-header" data-background-color="dark2">
                     <a href="/auth/admin/dashboard" class="logo">
                         <img src="{{ url_for('static', filename='images/LOGO STAFF.png') }}" alt="navbar brand" class="navbar-brand" height="75">
                     </a>
                     <div class="nav-toggle">
                         <button class="btn btn-toggle toggle-sidebar">
-                            <i class="gg-menu-right"></i>
+                           <i class="gg-menu-right"></i>
+                        </button>
+                        <button class="btn btn-toggle sidenav-toggler">
+                            <i class="gg-menu-left"></i>
                         </button>
                     </div>
+                    <button class="topbar-toggler more">
+                        <i class="gg-more-vertical-alt"></i>
+                    </button>
                 </div>
             </div>
             <div class="sidebar-wrapper scrollbar scrollbar-inner">
                 <div class="sidebar-content">
                     <ul class="nav nav-info">
                         <li class="nav-item active">
-                            <a href="index.html">
+                            <a href="/auth/admin/dashboard">
                                 <i class="fas fa-home"></i>
                                 <p>Inicio</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="/admin/acciones">
-                                <i class="fas fa-layer-group"></i>
+                                <i class="fas fa-users"></i>
                                 <p>Clientes</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="/admin/clientes_accion">
-                                <i class="fas fa-pen-square"></i>
+                                <i class="fas fa-chart-line"></i>
                                 <p>Acciones Comerciales</p>
                             </a>
                         </li>
@@ -61,17 +67,23 @@
                                 <p>Perfil</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="/admin/formularios">
+                                <i class="fas fa-pen-square"></i>
+                                <p>Formulario</p>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
         </div>
-   
+    
     <div class="main-panel">
         <div class="main-header">
             <div class="main-header-logo">
                 <!-- Logo Header -->
                 <div class="logo-header" data-background-color="dark">
-
+    
                     <a href="index.html" class="logo">
                         <img src="{{ url_for('static', filename='images/logo.png') }}" alt="navbar brand" class="navbar-brand" height="20">
                     </a>
@@ -81,7 +93,7 @@
                         </button>
                         <button class="btn btn-toggle sidenav-toggler">
                             <i class="gg-menu-left"></i>
-                        </button>
+                        </button>   
                     </div>
                     <button class="topbar-toggler more">
                         <i class="gg-more-vertical-alt"></i>
@@ -92,7 +104,7 @@
         <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
             <div class="container-fluid">
                 <h1>Bienvenido</h1>
-
+    
                 <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
                     <li class="nav-item topbar-icon dropdown hidden-caret">
                         <a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -158,34 +170,34 @@
                         </a>
                         <div class="dropdown-menu quick-actions animated fadeIn">
                             <div class="quick-actions-header">
-                                <span class="title mb-1">Quick Actions</span>
+                                <span class="title mb-1">Acciones Rápidas</span>
                                 <span class="subtitle op-7">Shortcuts</span>
                             </div>
                             <div class="quick-actions-scroll scrollbar-outer">
                                 <div class="quick-actions-items">
                                     <div class="row m-0">
-                                        <a class="col-6 col-md-4 p-0" href="#">
+                                        <a class="col-6 col-md-4 p-0" href="/admin/acciones">
                                             <div class="quick-actions-item">
                                                 <div class="avatar-item bg-info rounded-circle">
-                                                    <i class="fas fa-file-excel"></i>
+                                                    <i class="fas fa-chart-line"></i>
                                                 </div>
-                                                <span class="text">Reports</span>
+                                                <span class="text">Aciones Comerciales</span>
                                             </div>
                                         </a>
-                                        <a class="col-6 col-md-4 p-0" href="#">
+                                        <a class="col-6 col-md-4 p-0" href="/admin/clientes_accion">
                                             <div class="quick-actions-item">
                                                 <div class="avatar-item bg-success rounded-circle">
-                                                    <i class="fas fa-envelope"></i>
+                                                    <i class="fas fa-users"></i>
                                                 </div>
-                                                <span class="text">Emails</span>
+                                                <span class="text">Clientes</span>
                                             </div>
                                         </a>
-                                        <a class="col-6 col-md-4 p-0" href="#">
+                                        <a class="col-6 col-md-4 p-0" href="/admin/formularios">
                                             <div class="quick-actions-item">
                                                 <div class="avatar-item bg-primary rounded-circle">
-                                                    <i class="fas fa-file-invoice-dollar"></i>
+                                                    <i class="fas fa-pen-square"></i>
                                                 </div>
-                                                <span class="text">Invoice</span>
+                                                <span class="text">Formularios</span>
                                             </div>
                                         </a>    
                                     </div>
@@ -197,27 +209,27 @@
                     <li class="nav-item topbar-user dropdown hidden-caret">
                         <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">
                             <span class="profile-username">
-                                <span class="op-7">Hi,</span> <span class="fw-bold">Hizrian</span>
+                                <span class="op-7">Hola,</span> <span class="fw-bold">{{ usuario.nombre }}</span>
                             </span>
+                            <i class="fas fa-user-circle ms-2"></i>
                         </a>
                         <ul class="dropdown-menu dropdown-user animated fadeIn">
                             <div class="dropdown-user-scroll scrollbar-outer">
                                 <li>
-                                    <div class="user-box">
-                                        <div class="u-text">
-                                            <h4>Hizrian</h4>
-                                            <p class="text-muted">hello@example.com</p>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
+                                    <a class="dropdown-item" href="/auth/perfil">
+                                        <i class="fas fa-user me-2"></i> Perfil
+                                    </a>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fas fa-bell me-2"></i> Notificaciones
+                                    </a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#">Perfil</a>
-                                    <a class="dropdown-item" href="#">Notificaciones</a>
+                                    <a class="dropdown-item" id="toggleDarkMode" >
+                                        <i class="fas fa-moon me-2"></i> Dark Mode
+                                    </a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#">Dark Mode</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="{{ url_for('usuarios.logout') }}">Logout</a>
+                                    <a class="dropdown-item text-danger" href="{{ url_for('usuarios.logout') }}">
+                                        <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                    </a>
                                 </li>
                             </div>
                         </ul>
@@ -227,95 +239,139 @@
         </nav>
     </div>
     <div class="container">
-        <div class="page-inner">
-            <table id="formulariosTable" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Usuario</th>
-                        <th>Codigo</th>
-                        <th>Estado</th>
-                        <th>Fecha Creacion</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if formularios %}
-                        {% for formulario in formularios %}
-                        <tr>
-                            <td>{{ formulario.Usuario }}</td>
-                            <td>{{ formulario.FormularioID }}</td>
-                            <td>{{ formulario.Estado }}</td>
-                            <td>{{ formulario.FechaCreacion }}</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" onclick="editarFormulario('{{ formulario.FormularioID }}')">Editar</button>
-                                <button class="btn btn-success btn-sm" onclick="aprobarFormulario('{{ formulario.FormularioID }}')">Aprobar</button>
-                                <button class="btn btn-info btn-sm" onclick="descargarFormulario('{{ formulario.FormularioID }}')">Descargar</button>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td colspan="5" class="text-center">No hay formularios disponibles.</td>
-                        </tr>
-                    {% endif %}
-                </tbody>
-            </table>
-        </div>
-<!-- Modal para Editar Formulario -->
-<div class="modal fade" id="editarFormularioModal" tabindex="-1" aria-labelledby="editarFormularioModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <!-- Encabezado del Modal -->
-            <div class="modal-header bg-dark text-white">
-                <h5 class="modal-title" id="editarFormularioModalLabel">
-                    <i class="fas fa-edit me-2"></i> Editar Detalles del Formulario
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <!-- Cuerpo del Modal -->
-            <div class="modal-body">
-                <form id="editarFormularioForm">
-                    <!-- Tabla para los detalles del formulario -->
-                    <div class="table-responsive">
-                        <table class="table table-hover table-bordered">
-                            <thead class="thead-light">
-                                <tr class="text-center">
-                                    <th>Centro</th>
-                                    <th>Jefe Zona</th>
-                                    <th>Ruta</th>
-                                    <th>Código Cliente</th>
-                                    <th>Nombre Cliente</th>
-                                    <th>Nombre Negocio</th>
-                                    <th>Cluster</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablaDetalles">
-                                <!-- Las filas se cargarán dinámicamente aquí -->
-                            </tbody>
-                        </table>
+        <div class="card card-round">
+            <div class="card-header">
+                <div class="card-head-row card-tools-still-right">
+                    <div class="card-title"><i class="fas fa-list-alt me-2"></i> Formulario Recientes</div>
+                    <div class="card-tools">
+                        <div class="dropdown">
+                            <button class="btn btn-icon btn-clean me-0" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="#">Exportar</a>
+                                <a class="dropdown-item" href="#">Configurar Vista</a>
+                            </div>
+                        </div>
                     </div>
-                </form>
+                </div>
             </div>
-
-            <!-- Pie del Modal -->
-            <div class="modal-footer bg-light">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fas fa-times me-2"></i> Cerrar
-                </button>
-                <button type="button" class="btn btn-primary" onclick="guardarCambios()">
-                    <i class="fas fa-save me-2"></i> Guardar Cambios
-                </button>
-            </div>
+        
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table align-items-center mb-0">
+                        <thead class="thead-light">
+                            <tr class="text-center">
+                                <th>Usuario</th>
+                                <th>Código</th>
+                                <th>Estado</th>
+                                <th>Fecha Creación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if formularios %}
+                                {% for formulario in formularios %}
+                                <tr>
+                                    <td class="text-center">
+                                        <span class="fw-bold">{{ formulario.Usuario }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-dark text-white">{{ formulario.FormularioID }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        {% if formulario.Estado == "Aprobado" %}
+                                            <span class="badge bg-success">Aprobado</span>
+                                        {% elif formulario.Estado == "pending" %}
+                                            <span class="badge bg-warning text-dark">Pendiente</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Rechazado</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-muted">{{ formulario.FechaCreacion }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                            <button class="btn btn-primary btn-sm" onclick="editarFormulario('{{ formulario.FormularioID }}')" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-success btn-sm" onclick="aprobarFormulario('{{ formulario.FormularioID }}')" title="Aprobar">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-info btn-sm" onclick="descargarFormulario('{{ formulario.FormularioID }}')" title="Descargar">
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">No hay formularios disponibles.</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
+    <!-- Modal para Editar Formulario -->
+        <div class="modal fade" id="editarFormularioModal" tabindex="-1" aria-labelledby="editarFormularioModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <!-- Encabezado del Modal -->
+                    <div class="modal-header bg-dark text-white">
+                        <h5 class="modal-title" id="editarFormularioModalLabel">
+                            <i class="fas fa-edit me-2"></i> Editar Detalles del Formulario
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+    
+                    <!-- Cuerpo del Modal -->
+                    <div class="modal-body">
+                        <form id="editarFormularioForm">
+                            <!-- Tabla para los detalles del formulario -->
+                            <div class="table-responsive">
+                                <table class="table table-hover table-bordered">
+                                    <thead class="thead-light">
+                                        <tr class="text-center">
+                                            <th>Centro</th>
+                                            <th>Jefe Zona</th>
+                                            <th>Ruta</th>
+                                            <th>Código Cliente</th>
+                                            <th>Nombre Cliente</th>
+                                            <th>Nombre Negocio</th>
+                                            <th>Cluster</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tablaDetalles">
+                                        <!-- Las filas se cargarán dinámicamente aquí -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </form>
+                    </div>
+    
+                    <!-- Pie del Modal -->
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i> Cerrar
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="guardarCambios()">
+                            <i class="fas fa-save me-2"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </div>
+           </div>
+        </div>
+
     </div>
     <div class="footer">
         <p>&copy; 2024 Todos los derechos reservados.</p>
     </div>
-</div>
-</div>
+    </div>
+    </div>
     <script src="{{ url_for('static', filename= 'js/js/core/jquery-3.7.1.min.js')}}"></script>
 	<script src="{{ url_for('static', filename= 'js/js/core/popper.min.js')}}"></script>
 	<script src="{{ url_for('static', filename= 'js/js/core/bootstrap.min.js')}}"></script>
@@ -328,5 +384,6 @@
 	<script src="{{ url_for('static', filename= 'js/js/plugin/sweetalert/sweetalert.min.js')}}"></script>
 	<script src="{{ url_for('static', filename= 'js/js/kaiadmin.min.js')}}"></script>
     <script src="{{ url_for('static', filename= 'js/formulario.js')}}"></script>
+    <script src="{{ url_for('static', filename= 'js/dashboard.js')}}"></script>
 </body>
 </html>

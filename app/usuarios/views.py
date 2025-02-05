@@ -77,7 +77,20 @@ def dashboard_usuario():
 @usuarios_bp.route('/perfil')
 @login_required
 def perfil():
-    return render_template('perfil.html')
+    usuario_id = session.get('usuario_id')
+    usuario = obtener_usuario_por_id(usuario_id)
+
+    if usuario:
+        datos_usuario = {
+            "nombre": usuario[1],  # Columna 'usuario'
+            "rol": usuario[3]  # Columna 'rol'
+        }
+    else:
+        datos_usuario = {
+            "nombre": "Desconocido",
+            "rol": "Sin Rol"
+        }
+    return render_template('perfil.html',usuario=datos_usuario)
 
 @usuarios_bp.route('/api/get_usuario_id', methods=['GET'])
 @login_required

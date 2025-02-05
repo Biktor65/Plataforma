@@ -1,26 +1,42 @@
-from flask import Blueprint, render_template, jsonify, request
+from flask import Blueprint, render_template, jsonify, request, session
 from .models import fetch_formularios, guardar_formulario, actualizar_estado_formulario,fetch_formularios_por_fecha
 from .models import actualizar_detalles_formulario, fetch_formulario_por_id, eliminar_detalles_formulario, eliminar_formulario_si_vacio
 from datetime import datetime, timedelta
+from app.usuarios.models import obtener_usuario_por_id
 from app.usuarios.views import login_required, role_required
 
 # Crear un Blueprint para las rutas de formularios
 formularios_bp = Blueprint('formularios', __name__)
-
 
 @formularios_bp.route('/formularios')
 @login_required
 @role_required('admin') 
 def listar_formularios():
     try:
+        usuario_id = session.get('usuario_id')
+        usuario = obtener_usuario_por_id(usuario_id)
+
+        if usuario:
+            datos_usuario = {
+                "nombre": usuario[1],  # Columna 'usuario'
+                "rol": usuario[3]  # Columna 'rol'
+            }
+        else:
+            datos_usuario = {
+                "nombre": "Desconocido",
+                "rol": "Sin Rol"
+            }
+
         formularios = fetch_formularios()  
         if "error" in formularios:
             print("Error al obtener formularios:", formularios["error"])
             formularios = []  
-        return render_template('formulario.html', formularios=formularios)
+            
+        return render_template('formulario.html', formularios=formularios, usuario=datos_usuario)
     except Exception as e:
         print("Error en listar_formularios:", str(e))
-        return render_template('formulario.html', formularios=[])
+        return render_template('formulario.html', formularios=[], usuario={"nombre": "Desconocido", "rol": "Sin Rol"})
+
 
 @formularios_bp.route('/enviar_formulario', methods=['POST'])
 @login_required

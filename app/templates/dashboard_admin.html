@@ -21,24 +21,30 @@
 </head>
 <body>
     <div class="wrapper">
-        <div class="sidebar sidebar-style-2" data-background-color="dark">
+        <div class="sidebar sidebar-style-2" data-background-color="dark2">
             <div class="sidebar-logo">
-                <div class="logo-header" data-background-color="dark">
+                <div class="logo-header" data-background-color="dark2">
                     <a href="/auth/admin/dashboard" class="logo">
                         <img src="{{ url_for('static', filename='images/LOGO STAFF.png') }}" alt="navbar brand" class="navbar-brand" height="75">
                     </a>
                     <div class="nav-toggle">
                         <button class="btn btn-toggle toggle-sidebar">
-                            <i class="gg-menu-right"></i>
+                           <i class="gg-menu-right"></i>
+                        </button>
+                        <button class="btn btn-toggle sidenav-toggler">
+                            <i class="gg-menu-left"></i>
                         </button>
                     </div>
+                    <button class="topbar-toggler more">
+                        <i class="gg-more-vertical-alt"></i>
+                    </button>
                 </div>
             </div>
             <div class="sidebar-wrapper scrollbar scrollbar-inner">
                 <div class="sidebar-content">
                     <ul class="nav nav-info">
                         <li class="nav-item active">
-                            <a href="index.html">
+                            <a href="/auth/admin/dashboard">
                                 <i class="fas fa-home"></i>
                                 <p>Inicio</p>
                             </a>
@@ -327,6 +333,8 @@
 
 
 </div>
+</div>
+
     <script src="{{ url_for('static', filename= 'js/js/core/jquery-3.7.1.min.js')}}"></script>
 	<script src="{{ url_for('static', filename= 'js/js/core/popper.min.js')}}"></script>
 	<script src="{{ url_for('static', filename= 'js/js/core/bootstrap.min.js')}}"></script>

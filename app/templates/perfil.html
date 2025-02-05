@@ -20,13 +20,11 @@
 	</script>
 </head>
 <div class="wrapper">
-    <div class="sidebar" data-background-color="dark">
+    <div class="sidebar sidebar-style-2" data-background-color="dark2">
         <div class="sidebar-logo">
-            <!-- Logo Header -->
-            <div class="logo-header" data-background-color="dark">
-
+            <div class="logo-header" data-background-color="dark2">
                 <a href="/auth/admin/dashboard" class="logo">
-                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="navbar brand" class="navbar-brand" height="20">
+                    <img src="{{ url_for('static', filename='images/LOGO STAFF.png') }}" alt="navbar brand" class="navbar-brand" height="75">
                 </a>
                 <div class="nav-toggle">
                     <button class="btn btn-toggle toggle-sidebar">
@@ -40,37 +38,41 @@
                     <i class="gg-more-vertical-alt"></i>
                 </button>
             </div>
-        <!-- End Logo Header -->
-             
-    </div>	
-    <div class="sidebar-wrapper scrollbar scrollbar-inner">
-        <div class="sidebar-content">
-            <ul class="nav nav-secondary">
-                <li class="nav-item active">
-                    <a href="/auth/admin/dashboard">
-                        <i class="fas fa-home"></i>
-                        <p>Inicio</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/admin/acciones">
-                        <i class="fas fa-layer-group"></i>
-                        <p>Clientes</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/admin/clientes_accion">
-                        <i class="fas fa-pen-square"></i>
-                        <p>Acciones Comerciales</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#">
-                        <i class="fas fa-pen-square"></i>
-                        <p>Perfil</p>
-                    </a>
-                </li>
-            </ul>
+        </div>
+        <div class="sidebar-wrapper scrollbar scrollbar-inner">
+            <div class="sidebar-content">
+                <ul class="nav nav-info">
+                    <li class="nav-item active">
+                        <a href="/auth/admin/dashboard">
+                            <i class="fas fa-home"></i>
+                            <p>Inicio</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/acciones">
+                            <i class="fas fa-users"></i>
+                            <p>Clientes</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/clientes_accion">
+                            <i class="fas fa-chart-line"></i>
+                            <p>Acciones Comerciales</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/auth/perfil">
+                            <i class="fas fa-user"></i>
+                            <p>Perfil</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/formularios">
+                            <i class="fas fa-pen-square"></i>
+                            <p>Formulario</p>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
@@ -90,7 +92,7 @@
                     </button>
                     <button class="btn btn-toggle sidenav-toggler">
                         <i class="gg-menu-left"></i>
-                    </button>
+                    </button>   
                 </div>
                 <button class="topbar-toggler more">
                     <i class="gg-more-vertical-alt"></i>
@@ -167,34 +169,34 @@
                     </a>
                     <div class="dropdown-menu quick-actions animated fadeIn">
                         <div class="quick-actions-header">
-                            <span class="title mb-1">Quick Actions</span>
+                            <span class="title mb-1">Acciones Rápidas</span>
                             <span class="subtitle op-7">Shortcuts</span>
                         </div>
                         <div class="quick-actions-scroll scrollbar-outer">
                             <div class="quick-actions-items">
                                 <div class="row m-0">
-                                    <a class="col-6 col-md-4 p-0" href="#">
+                                    <a class="col-6 col-md-4 p-0" href="/admin/acciones">
                                         <div class="quick-actions-item">
                                             <div class="avatar-item bg-info rounded-circle">
-                                                <i class="fas fa-file-excel"></i>
+                                                <i class="fas fa-chart-line"></i>
                                             </div>
-                                            <span class="text">Reports</span>
+                                            <span class="text">Aciones Comerciales</span>
                                         </div>
                                     </a>
-                                    <a class="col-6 col-md-4 p-0" href="#">
+                                    <a class="col-6 col-md-4 p-0" href="/admin/clientes_accion">
                                         <div class="quick-actions-item">
                                             <div class="avatar-item bg-success rounded-circle">
-                                                <i class="fas fa-envelope"></i>
+                                                <i class="fas fa-users"></i>
                                             </div>
-                                            <span class="text">Emails</span>
+                                            <span class="text">Clientes</span>
                                         </div>
                                     </a>
-                                    <a class="col-6 col-md-4 p-0" href="#">
+                                    <a class="col-6 col-md-4 p-0" href="/admin/formularios">
                                         <div class="quick-actions-item">
                                             <div class="avatar-item bg-primary rounded-circle">
-                                                <i class="fas fa-file-invoice-dollar"></i>
+                                                <i class="fas fa-pen-square"></i>
                                             </div>
-                                            <span class="text">Invoice</span>
+                                            <span class="text">Formularios</span>
                                         </div>
                                     </a>    
                                 </div>
@@ -206,27 +208,27 @@
                 <li class="nav-item topbar-user dropdown hidden-caret">
                     <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">
                         <span class="profile-username">
-                            <span class="op-7">Hi,</span> <span class="fw-bold">Hizrian</span>
+                            <span class="op-7">Hola,</span> <span class="fw-bold">{{ usuario.nombre }}</span>
                         </span>
+                        <i class="fas fa-user-circle ms-2"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-user animated fadeIn">
                         <div class="dropdown-user-scroll scrollbar-outer">
                             <li>
-                                <div class="user-box">
-                                    <div class="u-text">
-                                        <h4>Hizrian</h4>
-                                        <p class="text-muted">hello@example.com</p>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
+                                <a class="dropdown-item" href="/auth/perfil">
+                                    <i class="fas fa-user me-2"></i> Perfil
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-bell me-2"></i> Notificaciones
+                                </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">Perfil</a>
-                                <a class="dropdown-item" href="#">Notificaciones</a>
+                                <a class="dropdown-item" id="toggleDarkMode" >
+                                    <i class="fas fa-moon me-2"></i> Dark Mode
+                                </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">Dark Mode</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{{ url_for('usuarios.logout') }}">Logout</a>
+                                <a class="dropdown-item text-danger" href="{{ url_for('usuarios.logout') }}">
+                                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                </a>
                             </li>
                         </div>
                     </ul>
@@ -237,86 +239,97 @@
 </div>
 <div class="container">
     <div class="page-inner">
-        <div class="page-header">
-            <h4 class="page-title">Perfil de Usuario</h4>
+        <div class="col-md-10">
+        <div class="card card-round mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <h4 class="mb-1 fw-bold">Perfil de Usuario</h4>
+                        <p class="text-muted mb-0">Gestiona la configuración de tu cuenta</p>
+                    </div>
+                </div>
+            </div>
+        </div>
         </div>
         <div class="row">
-            <div class="col-md-8">
-                <div class="card">
+            <div class="col-md-10">
+                <div class="card card-round">
                     <div class="card-header">
-                        <div class="card-title">Actualizar Perfil</div>
+                        <div class="card-title"><i class="fas fa-user-edit me-2"></i> Actualizar Perfil</div>
                     </div>
                     <div class="card-body">
                         <form id="perfilForm">
                             <div class="form-group">
-                                <label for="id">ID:</label>
-                                <input type="text" class="form-control" id="id" name="id" readonly>
+                                <label for="id" class="fw-bold"><i class="fas fa-id-card me-2"></i> ID:</label>
+                                <input type="text" class="form-control form-control-lg" id="id" name="id" readonly>
                             </div>
-                            <div class="form-group">
-                                <label for="usuario">Usuario:</label>
-                                <input type="text" class="form-control" id="usuario" name="usuario">
+                            <div class="form-group mt-3">
+                                <label for="usuario" class="fw-bold"><i class="fas fa-user me-2"></i> Usuario:</label>
+                                <input type="text" class="form-control form-control-lg" id="usuario" name="usuario">
                             </div>
-                        <!-- Botón para abrir el modal de cambio de contraseña -->
-                        <div class="form-group">
-                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#cambiarContraseñaModal">
-                                Cambiar Contraseña
-                            </button>
-                        </div>
-
-                        <!-- Modal de Cambio de Contraseña -->
-                        <div class="modal fade" id="cambiarContraseñaModal" tabindex="-1" aria-labelledby="cambiarContraseñaModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <!-- Encabezado del Modal con Estilo Personalizado -->
-                                    <div class="modal-header bg-primary text-white">
-                                        <h5 class="modal-title" id="cambiarContraseñaModalLabel">Cambiar Contraseña</h5>
-                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <!-- Cuerpo del Modal -->
-                                    <div class="modal-body">
-                                        <form id="cambiarContraseñaForm">
-                                            <div class="form-group">
-                                                <label for="contraseña_actual">Contraseña Actual:</label>
-                                                <input type="password" class="form-control" id="contraseña_actual" name="contraseña_actual" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="nueva_contraseña">Nueva Contraseña:</label>
-                                                <input type="password" class="form-control" id="nueva_contraseña" name="nueva_contraseña" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="confirmar_contraseña">Confirmar Nueva Contraseña:</label>
-                                                <input type="password" class="form-control" id="confirmar_contraseña" name="confirmar_contraseña" required>
-                                            </div>
-                                        </form>
-                                    </div>
-                                    <!-- Pie del Modal -->
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                        <button type="button" class="btn btn-primary" onclick="cambiarContraseña()">Guardar Cambios</button>
-                                        
+            
+                            <div class="form-group mt-3 text-center">
+                                <button type="button" class="btn btn-outline-primary btn-lg" data-bs-toggle="modal" data-bs-target="#cambiarContraseñaModal">
+                                    <i class="fas fa-lock me-2"></i> Cambiar Contraseña
+                                </button>
+                            </div>
+            
+                            <div class="modal fade" id="cambiarContraseñaModal" tabindex="-1" aria-labelledby="cambiarContraseñaModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-primary text-white">
+                                            <h5 class="modal-title"><i class="fas fa-key me-2"></i> Cambiar Contraseña</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="cambiarContraseñaForm">
+                                                <div class="form-group">
+                                                    <label for="contraseña_actual" class="fw-bold">Contraseña Actual:</label>
+                                                    <input type="password" class="form-control" id="contraseña_actual" name="contraseña_actual" required>
+                                                </div>
+                                                <div class="form-group mt-3">
+                                                    <label for="nueva_contraseña" class="fw-bold">Nueva Contraseña:</label>
+                                                    <input type="password" class="form-control" id="nueva_contraseña" name="nueva_contraseña" required>
+                                                </div>
+                                                <div class="form-group mt-3">
+                                                    <label for="confirmar_contraseña" class="fw-bold">Confirmar Nueva Contraseña:</label>
+                                                    <input type="password" class="form-control" id="confirmar_contraseña" name="confirmar_contraseña" required>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                <i class="fas fa-times me-2"></i> Cerrar
+                                            </button>
+                                            <button type="button" class="btn btn-primary" onclick="cambiarContraseña()">
+                                                <i class="fas fa-save me-2"></i> Guardar Cambios
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                            <div class="form-group">
-                                <button type="button" class="btn btn-primary" onclick="actualizarPerfil()">Guardar Cambios</button>
+            
+                            <div class="form-group mt-4 text-center">
+                                <button type="button" class="btn btn-success btn-lg" onclick="actualizarPerfil()">
+                                    <i class="fas fa-save me-2"></i> Guardar Cambios
+                                </button>
                             </div>
-
-                         
                         </form>
                     </div>
-                </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-</div>
+
 </div>
 <div class="footer">
     <p>&copy; 2024 Todos los derechos reservados.</p>
 </div>
 </div>
+
 </div>
+
+
     <script src="{{ url_for('static', filename= 'js/js/core/jquery-3.7.1.min.js')}}"></script>
 	<script src="{{ url_for('static', filename= 'js/js/core/popper.min.js')}}"></script>
 	<script src="{{ url_for('static', filename= 'js/js/core/bootstrap.min.js')}}"></script>
@@ -329,6 +342,7 @@
 	<script src="{{ url_for('static', filename= 'js/js/plugin/sweetalert/sweetalert.min.js')}}"></script>
 	<script src="{{ url_for('static', filename= 'js/js/kaiadmin.min.js')}}"></script>
     <script src="{{ url_for('static', filename= 'js/perfil.js')}}"></script>
+    <script src="{{ url_for('static', filename= 'js/dashboard.js')}}"></script>   
 
 
    
