@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Acciones Comerciales</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
@@ -238,10 +239,9 @@
         </nav>
     </div>
     <div class="container">
-        <div class="container mt-4">
             <div class="card card-round">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Acciones Comerciales</h4>
+                    <div class="card-title"><i class="fas fa-chart-line me-2"></i> Acciones Comerciales</div>
                     <button class="btn btn-primary btn-round" data-bs-toggle="modal" data-bs-target="#addAccionModal">
                         <i class="fa fa-plus"></i> Agregar Acción
                     </button>
@@ -284,7 +284,6 @@
                     <button onclick="location.href='/'" class="btn btn-secondary">Volver al Inicio</button>
                 </div>
             </div>
-        </div>
         
         <!-- Modal para agregar una nueva acción -->
         <div class="modal fade" id="addAccionModal" tabindex="-1" role="dialog" aria-labelledby="addAccionLabel" aria-hidden="true">
@@ -328,7 +327,6 @@
 	<script src="{{ url_for('static', filename= 'js/js/plugin/bootstrap-notify/bootstrap-notify.min.js')}}"></script>
 	<script src="{{ url_for('static', filename= 'js/js/plugin/sweetalert/sweetalert.min.js')}}"></script>
 	<script src="{{ url_for('static', filename= 'js/js/kaiadmin.min.js')}}"></script>
-    <script src="{{ url_for('static', filename= 'js/formulario.js')}}"></script>
     <script src="{{ url_for('static', filename= 'js/dashboard.js')}}"></script>
 </body>
 </html>

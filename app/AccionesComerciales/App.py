@@ -181,20 +181,33 @@ def delete_accion(codaccion):
 
 # CRUD para ClienteAccionComercial
 
-@acciones_clientes.route('/clientes_accion', methods=['GET','POST'])
+@acciones_clientes.route('/clientes_accion', methods=['GET', 'POST'])
 @login_required
 @role_required('admin')
 def clientes_accion():
     acciones_comerciales = []
     clientes_accion = []
+    datos_usuario = {"nombre": "Desconocido", "rol": "Sin Rol"}
 
     try:
+        # Obtener usuario desde la sesión
+        usuario_id = session.get('usuario_id')
+        usuario = obtener_usuario_por_id(usuario_id)
+
+        if usuario:
+            datos_usuario = {
+                "nombre": usuario[1],  # Nombre del usuario
+                "rol": usuario[3]  # Rol del usuario
+            }
+
         with pyodbc.connect(conexion_str) as conexion:
             cursor = conexion.cursor()
 
+            # Obtener lista de acciones comerciales
             cursor.execute("SELECT CODAccionComercial, Descripcion FROM AccionesComerciales")
             acciones_comerciales = cursor.fetchall()
 
+            # Obtener lista de clientes con acciones comerciales
             cursor.execute("""
                 SELECT cac.CODCLIENTE, cac.CODAccionComercial, c.NombreClienteLegal, c.NombreComercial, ac.Descripcion
                 FROM ClienteAccionComercial AS cac
@@ -204,26 +217,49 @@ def clientes_accion():
                 OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY
             """)
             clientes_accion = cursor.fetchall()
+
     except Exception as e:
         print(f"Error al obtener datos: {e}")
-    
+
     if request.method == 'POST':
         codcliente = request.form['codcliente']
         codaccion = request.form['codaccion']
+
         try:
             with pyodbc.connect(conexion_str) as conexion:
                 cursor = conexion.cursor()
+
+                # Verificar si el cliente existe
                 cursor.execute("SELECT COUNT(*) FROM Clientes WHERE CODCLIENTE = ?", (codcliente,))
                 if cursor.fetchone()[0] == 0:
-                    return render_template('clientes_accion.html', error="El cliente no existe.", clientes_accion=clientes_accion, acciones_comerciales=acciones_comerciales)
-                cursor.execute(""" INSERT INTO ClienteAccionComercial (CODCLIENTE, CODAccionComercial) VALUES (?, ?)""", (codcliente, codaccion))
-                conexion.commit()                
-                return render_template('clientes_accion.html', success="Cliente y acción comercial añadidos correctamente.", clientes_accion=clientes_accion,acciones_comerciales=acciones_comerciales)
+                    return render_template('clientes_accion.html', 
+                                           error="El cliente no existe.", 
+                                           clientes_accion=clientes_accion, 
+                                           acciones_comerciales=acciones_comerciales, 
+                                           usuario=datos_usuario)
+
+                # Insertar la acción comercial para el cliente
+                cursor.execute("INSERT INTO ClienteAccionComercial (CODCLIENTE, CODAccionComercial) VALUES (?, ?)", 
+                               (codcliente, codaccion))
+                conexion.commit()
+                
+                return render_template('clientes_accion.html', 
+                                       success="Cliente y acción comercial añadidos correctamente.", 
+                                       clientes_accion=clientes_accion, 
+                                       acciones_comerciales=acciones_comerciales, 
+                                       usuario=datos_usuario)
         except Exception as e:
             print(f"Error al procesar el POST: {e}")
-            return render_template('clientes_accion.html', error="Error al procesar la solicitud.",clientes_accion=clientes_accion, acciones_comerciales=acciones_comerciales)
-    return render_template('clientes_accion.html', acciones_comerciales=acciones_comerciales, clientes_accion=clientes_accion
-    )
+            return render_template('clientes_accion.html', 
+                                   error="Error al procesar la solicitud.", 
+                                   clientes_accion=clientes_accion, 
+                                   acciones_comerciales=acciones_comerciales, 
+                                   usuario=datos_usuario)
+
+    return render_template('clientes_accion.html', 
+                           acciones_comerciales=acciones_comerciales, 
+                           clientes_accion=clientes_accion, 
+                           usuario=datos_usuario)
 
 
 

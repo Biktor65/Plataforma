@@ -1,5 +1,5 @@
 let offset = 100;
-const limit = 100
+const limit = 100;
 
 async function cargarMasClientes() {
     const response = await fetch(`/admin/fetch_clientes_accion_paginated?offset=${offset}&limit=${limit}`);
@@ -7,25 +7,35 @@ async function cargarMasClientes() {
 
     if (response.ok) {
         const tbody = document.getElementById('clientesAccionBody');
+
         clientes.forEach(cliente => {
-            const row = `
-                <tr>
-                    <td class="cliente-codigo">${cliente.CODCLIENTE}</td>
-                    <td>${cliente.Descripcion}</td>
-                    <td>${cliente.NombreClienteLegal}</td>
-                    <td>${cliente.NombreComercial}</td>
-                    <td>
-                        <a href="/clientes_accion/edit/${cliente.CODCLIENTE}/${cliente.CODAccionComercial}" class="edit-link">Editar</a>
-                        <form action="/clientes_accion/delete/${cliente.CODCLIENTE}/${cliente.CODAccionComercial}" method="POST" style="display:inline;" onsubmit="return confirmDelete();">
-                            <button type="submit" class="btn btn-danger">Eliminar</button>
-                        </form>
-                    </td>
-                </tr>
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="cliente-codigo">${cliente.CODCLIENTE}</td>
+                <td>${cliente.Descripcion}</td>
+                <td>${cliente.NombreClienteLegal}</td>
+                <td>${cliente.NombreComercial}</td>
+                <td class="text-center">
+                    <a href="/clientes_accion/edit/${cliente.CODCLIENTE}/${cliente.CODAccionComercial}" class="btn btn-link btn-primary btn-sm">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                    <form action="/clientes_accion/delete/${cliente.CODCLIENTE}/${cliente.CODAccionComercial}" method="POST" onsubmit="return confirmDelete();" style="display:inline;">
+                        <button type="submit" class="btn btn-link btn-danger btn-sm">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </form>
+                </td>
             `;
-            tbody.insertAdjacentHTML('beforeend', row);
+
+            // Agregar animación para que la fila aparezca suavemente
+            row.style.opacity = "0";
+            tbody.appendChild(row);
+            setTimeout(() => {
+                row.style.opacity = "1";
+            }, 100);
         });
 
-        offset += limit; 
+        offset += limit;
 
         if (clientes.length < limit) {
             document.getElementById('loadMoreBtn').style.display = 'none';
@@ -34,6 +44,7 @@ async function cargarMasClientes() {
         console.error('Error al cargar más clientes:', clientes.error);
     }
 }
+
 document.getElementById('loadMoreBtn').addEventListener('click', cargarMasClientes);
 
 function fetchSuggestions() {
@@ -43,13 +54,12 @@ function fetchSuggestions() {
     const tr = table.getElementsByTagName('tr');
     const suggestions = document.getElementById('suggestions');
 
-    // Filtrar la tabla
-    for (let i = 1; i < tr.length; i++) {  // Skip the header row
+    // Filtrar la tabla en tiempo real
+    for (let i = 1; i < tr.length; i++) {  
         const clienteCodigo = tr[i].getElementsByClassName('cliente-codigo')[0].textContent.toLowerCase() || '';
         tr[i].style.display = clienteCodigo.indexOf(filter) > -1 ? "" : "none";
     }
 
-    // Obtener sugerencias si hay texto de búsqueda
     if (filter.length > 0 && /^\d*$/.test(filter)) {
         fetch(`/admin/fetch_clientes_accion/${filter}`)
             .then(response => response.json())
@@ -58,22 +68,22 @@ function fetchSuggestions() {
                 if (data.length > 0) {
                     data.forEach(item => {
                         const div = document.createElement('div');
-                        div.classList.add('suggestion-item');
+                        div.classList.add('suggestion-item', 'dropdown-item'); // Usa la clase de KaiAdmin
                         div.innerText = `${item.CODCLIENTE} - ${item.NombreComercial}`;
                         div.onclick = () => {
-                            input.value = item.CODCLIENTE; // Mantiene el código en el input de búsqueda
-                            suggestions.style.display = 'none'; // Oculta las sugerencias
-                            filterTable(item.CODCLIENTE);  // Filtra la tabla usando el código seleccionado
+                            input.value = item.CODCLIENTE;
+                            suggestions.style.display = 'none';
+                            filterTable(item.CODCLIENTE);
                         };
                         suggestions.appendChild(div);
                     });
-                    suggestions.style.display = 'block'; // Muestra las sugerencias
+                    suggestions.style.display = 'block';
                 } else {
-                    suggestions.style.display = 'none'; // Oculta las sugerencias si no hay datos
+                    suggestions.style.display = 'none';
                 }
             });
     } else {
-        suggestions.style.display = 'none'; // Ocultar sugerencias si no hay filtro
+        suggestions.style.display = 'none';
     }
 }
 
@@ -86,7 +96,6 @@ function buscarClientes() {
         return;
     }
 
-    // Realiza la búsqueda solo cuando se presione el botón de buscar
     fetch(`/admin/fetch_clientes/${codcliente}`)
         .then(response => response.json())
         .then(data => {
@@ -94,20 +103,20 @@ function buscarClientes() {
             if (data.length > 0) {
                 data.forEach(item => {
                     const div = document.createElement('div');
-                    div.classList.add('suggestion-item');
+                    div.classList.add('suggestion-item', 'dropdown-item');
                     div.innerText = `${item.CODCLIENTE} - ${item.NombreComercial}`;
                     div.onclick = () => {
-                        document.getElementById('codcliente').value = item.CODCLIENTE; // Asigna el código en el input
-                        document.getElementById('nombreComercial').innerText = item.NombreComercial; // Muestra el nombre comercial
-                        fetchClientData(); //Actualiza la tabla
-                        suggestions.style.display = 'none'; // Oculta las sugerencias
+                        document.getElementById('codcliente').value = item.CODCLIENTE;
+                        document.getElementById('nombreComercial').innerText = item.NombreComercial;
+                        fetchClientData();
+                        suggestions.style.display = 'none';
                     };
                     suggestions.appendChild(div);
                 });
-                suggestions.style.display = 'block'; // Muestra las sugerencias en una ventana emergente
+                suggestions.style.display = 'block';
             } else {
-                suggestions.innerHTML = '<div class="no-suggestions">No se encontraron coincidencias.</div>';
-                suggestions.style.display = 'block'; // Muestra un mensaje si no hay sugerencias
+                suggestions.innerHTML = '<div class="dropdown-item text-muted">No se encontraron coincidencias.</div>';
+                suggestions.style.display = 'block';
             }
         })
         .catch(error => {
@@ -128,7 +137,6 @@ function filterTable(codigo) {
 function fetchClientData() {
     const codcliente = document.getElementById('codcliente').value;
     if (codcliente) {
-        // Obtener datos del cliente en la tabla Clientes
         fetch(`/admin/fetch_cliente/${codcliente}`)
             .then(response => {
                 if (!response.ok) {
@@ -140,24 +148,15 @@ function fetchClientData() {
             })
             .then(data => {
                 if (data) {
-                    // Mostrar los datos del cliente
                     document.getElementById('nombreLegal').innerText = data.NombreClienteLegal;
                     document.getElementById('nombreComercial').innerText = data.NombreComercial;
-                    
-                    // Verificar si hay promociones y mostrarlas, si no, indicar que no hay
-                    const promociones = data.Promociones && data.Promociones.length > 0 
-                        ? data.Promociones.join(', ') 
-                        : 'NO PROMOCIÓN';
-                    document.getElementById('promociones').innerText = promociones;
-
-                    // Mostrar la sección con los datos del cliente
+                    document.getElementById('promociones').innerText = data.Promociones?.join(', ') || 'NO PROMOCIÓN';
                     document.getElementById('client-info').style.display = 'block';
                 }
             })
             .catch(error => console.error('Error al obtener datos del cliente:', error));
     }
 }
-
 
 function validateForm() {
     const nombreLegal = document.getElementById('nombreLegal').innerText;
@@ -171,5 +170,5 @@ function validateForm() {
 }
 
 function confirmDelete() {
-    return confirm("¿Estás seguro de que deseas eliminar esta acción?");
+    return confirm("¿Estás seguro de que deseas eliminar esta acción?");
 }
