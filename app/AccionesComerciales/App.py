@@ -283,19 +283,40 @@ def get_clientes_accion():
 @role_required('admin')
 def fetch_clientes_accion_paginated():
     try:
-        limit = int(request.args.get('limit', 100)) 
-        offset = int(request.args.get('offset', 0))  
+        draw = int(request.args.get('draw', 1))  # Control de DataTables
+        start = int(request.args.get('start', 0))  # Desde qué registro comenzar
+        length = int(request.args.get('length', 10))  # Cuántos registros obtener
+        search_value = request.args.get('search[value]', '')  # Filtro de búsqueda
 
         with pyodbc.connect(conexion_str) as conexion:
             cursor = conexion.cursor()
+
+            # Contar el total de registros sin filtrar
+            cursor.execute("SELECT COUNT(*) FROM ClienteAccionComercial")
+            total_records = cursor.fetchone()[0]
+
+            # Filtrar por búsqueda si hay un valor de búsqueda
+            if search_value:
+                cursor.execute("""
+                    SELECT COUNT(*) FROM ClienteAccionComercial AS cac
+                    JOIN AccionesComerciales AS ac ON cac.CODAccionComercial = ac.CODAccionComercial
+                    JOIN Clientes AS c ON cac.CODCLIENTE = c.CODCliente
+                    WHERE c.NombreComercial LIKE ? OR c.CODCLIENTE LIKE ?
+                """, ('%' + search_value + '%', '%' + search_value + '%'))
+                filtered_records = cursor.fetchone()[0]
+            else:
+                filtered_records = total_records
+
+            # Obtener los datos con paginación y filtro
             cursor.execute("""
                 SELECT cac.CODCLIENTE, cac.CODAccionComercial, c.NombreClienteLegal, c.NombreComercial, ac.Descripcion
                 FROM ClienteAccionComercial AS cac
                 JOIN AccionesComerciales AS ac ON cac.CODAccionComercial = ac.CODAccionComercial
                 JOIN Clientes AS c ON cac.CODCLIENTE = c.CODCliente
+                WHERE c.NombreComercial LIKE ? OR c.CODCLIENTE LIKE ?
                 ORDER BY cac.CODCLIENTE
                 OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-            """, (offset, limit))
+            """, ('%' + search_value + '%', '%' + search_value + '%', start, length))
 
             clientes_accion = cursor.fetchall()
 
@@ -310,7 +331,13 @@ def fetch_clientes_accion_paginated():
             for cliente in clientes_accion
         ]
 
-        return jsonify(clientes_data)
+        return jsonify({
+            "draw": draw,
+            "recordsTotal": total_records,
+            "recordsFiltered": filtered_records,
+            "data": clientes_data
+        })
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

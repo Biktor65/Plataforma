@@ -1,51 +1,98 @@
-let offset = 100;
-const limit = 100;
-
-async function cargarMasClientes() {
-    const response = await fetch(`/admin/fetch_clientes_accion_paginated?offset=${offset}&limit=${limit}`);
-    const clientes = await response.json();
-
-    if (response.ok) {
-        const tbody = document.getElementById('clientesAccionBody');
-
-        clientes.forEach(cliente => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td class="cliente-codigo">${cliente.CODCLIENTE}</td>
-                <td>${cliente.Descripcion}</td>
-                <td>${cliente.NombreClienteLegal}</td>
-                <td>${cliente.NombreComercial}</td>
-                <td class="text-center">
-                    <a href="/clientes_accion/edit/${cliente.CODCLIENTE}/${cliente.CODAccionComercial}" class="btn btn-link btn-primary btn-sm">
-                        <i class="fa fa-edit"></i>
-                    </a>
-                    <form action="/clientes_accion/delete/${cliente.CODCLIENTE}/${cliente.CODAccionComercial}" method="POST" onsubmit="return confirmDelete();" style="display:inline;">
-                        <button type="submit" class="btn btn-link btn-danger btn-sm">
-                            <i class="fa fa-times"></i>
-                        </button>
-                    </form>
-                </td>
-            `;
-
-            // Agregar animación para que la fila aparezca suavemente
-            row.style.opacity = "0";
-            tbody.appendChild(row);
-            setTimeout(() => {
-                row.style.opacity = "1";
-            }, 100);
-        });
-
-        offset += limit;
-
-        if (clientes.length < limit) {
-            document.getElementById('loadMoreBtn').style.display = 'none';
+$(document).ready(function () {
+    let table = $('#clientesAccionTable').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": "/admin/fetch_clientes_accion_paginated",
+            "type": "GET",
+            "data": function (d) {
+                d.searchValue = $('#search').val();  // Captura el valor del input de búsqueda
+            }
+        },
+        "columns": [
+            { "data": "CODCLIENTE" },
+            { "data": "Descripcion" },
+            { "data": "NombreClienteLegal" },
+            { "data": "NombreComercial" },
+            {
+                "data": null,
+                "className": "text-center",
+                "render": function (data, type, row) {
+                    return `
+                        <a href="/clientes_accion/edit/${row.CODCLIENTE}/${row.CODAccionComercial}" class="btn btn-link btn-primary btn-sm">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        <form action="/clientes_accion/delete/${row.CODCLIENTE}/${row.CODAccionComercial}" method="POST" onsubmit="return confirmDelete();" style="display:inline;">
+                            <button type="submit" class="btn btn-link btn-danger btn-sm">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </form>
+                    `;
+                }
+            }
+        ],
+        "paging": true,
+        "searching": true,
+        "ordering": false,
+        "info": false,
+        "lengthChange": false,
+        "pageLength": 10,
+        "language": {
+            "zeroRecords": "No hay resultados",
+            "search": "Buscar:",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
         }
-    } else {
-        console.error('Error al cargar más clientes:', clientes.error);
+    });
+
+    $('#search').on('keyup', function () {
+        table.ajax.reload(); 
+    });
+});
+
+// Confirmación de eliminación
+function confirmDelete() {
+    return confirm("¿Estás seguro de que deseas eliminar esta acción?");
+}
+
+function actualizarPaginacion(paginaActual, totalPaginas) {
+    const paginacionDiv = document.getElementById('paginacion');
+    paginacionDiv.innerHTML = ""; // Limpiar paginación
+
+    if (totalPaginas > 1) {
+        // Botón "Anterior"
+        if (paginaActual > 1) {
+            let prevButton = document.createElement('button');
+            prevButton.classList.add("btn", "btn-outline-secondary", "me-2");
+            prevButton.textContent = "Anterior";
+            prevButton.onclick = () => cargarClientes(paginaActual - 1);
+            paginacionDiv.appendChild(prevButton);
+        }
+
+        // Números de página
+        for (let i = 1; i <= totalPaginas; i++) {
+            let button = document.createElement('button');
+            button.classList.add("btn", "btn-sm", i === paginaActual ? "btn-primary" : "btn-outline-secondary");
+            button.textContent = i;
+            button.onclick = () => cargarClientes(i);
+            paginacionDiv.appendChild(button);
+        }
+
+        // Botón "Siguiente"
+        if (paginaActual < totalPaginas) {
+            let nextButton = document.createElement('button');
+            nextButton.classList.add("btn", "btn-outline-secondary", "ms-2");
+            nextButton.textContent = "Siguiente";
+            nextButton.onclick = () => cargarClientes(paginaActual + 1);
+            paginacionDiv.appendChild(nextButton);
+        }
     }
 }
 
-document.getElementById('loadMoreBtn').addEventListener('click', cargarMasClientes);
 
 function fetchSuggestions() {
     const input = document.getElementById('search');
@@ -56,8 +103,12 @@ function fetchSuggestions() {
 
     // Filtrar la tabla en tiempo real
     for (let i = 1; i < tr.length; i++) {  
-        const clienteCodigo = tr[i].getElementsByClassName('cliente-codigo')[0].textContent.toLowerCase() || '';
-        tr[i].style.display = clienteCodigo.indexOf(filter) > -1 ? "" : "none";
+        let clienteCell = tr[i].getElementsByClassName('cliente-codigo')[0];
+    
+        if (clienteCell) {  // Verifica que la celda existe
+            const clienteCodigo = clienteCell.textContent.toLowerCase();
+            tr[i].style.display = clienteCodigo.indexOf(filter) > -1 ? "" : "none";
+        }
     }
 
     if (filter.length > 0 && /^\d*$/.test(filter)) {
