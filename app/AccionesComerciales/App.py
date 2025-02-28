@@ -3,6 +3,7 @@ from app.usuarios.views import login_required,role_required
 from app.usuarios.models import obtener_usuario_por_id
 import pyodbc
 import pandas as pd
+import io
 import os
 from dotenv import load_dotenv
 
@@ -29,76 +30,115 @@ def allowed_file(filename):
 @role_required('admin')
 def upload_excel():
     if 'file' not in request.files:
-        return redirect(url_for('acciones_clientes.clientes_accion', error="No se seleccionó ningún archivo."))
+        return jsonify({"error": "No se seleccionó ningún archivo."}), 400
 
     file = request.files['file']
 
     if file.filename == '':
-        return redirect(url_for('acciones_clientes.clientes_accion', error="El archivo no tiene un nombre válido."))
+        return jsonify({"error": "El archivo no tiene un nombre válido."}), 400
 
     if file and allowed_file(file.filename):
-        filepath = os.path.join(UPLOAD_FOLDER, file.filename)
-        file.save(filepath)
         try:
-            procesar_excel(filepath)
-            return redirect(url_for('acciones_clientes.clientes_accion', success="Archivo procesado con éxito."))
+            file_stream = io.BytesIO(file.read())
+
+            datos_verificados, errores = procesar_excel(file_stream)
+
+            return jsonify({
+                "datos": datos_verificados,
+                "errores": errores
+            }), 200
+
         except Exception as e:
-            return redirect(url_for('acciones_clientes.clientes_accion', error=f"Error al procesar el archivo: {e}"))
+            return jsonify({"error": f"Error al procesar el archivo: {e}"}), 500
+    else:
+        return jsonify({"error": "Archivo no permitido."}), 400
+    
+@acciones_clientes.route('/confirmar_subida', methods=['POST'])
+@login_required
+@role_required('admin')
+def confirmar_subida():
+    datos = request.json
 
-    return redirect(url_for('acciones_clientes.clientes_accion', error="Archivo no permitido."))
+    if not datos:
+        return jsonify({"error": "No se recibieron datos para insertar."}), 400
 
+    try:
+        with pyodbc.connect(conexion_str) as conexion:
+            cursor = conexion.cursor()
 
-def procesar_excel(filepath):
-    # Leer el archivo Excel con las columnas `CODCLIENTE` como cadenas
-    df = pd.ExcelFile(filepath)
-    with pyodbc.connect(conexion_str) as conexion:
-        cursor = conexion.cursor()
-
-        for sheet_name in df.sheet_names:
-            data = df.parse(sheet_name, dtype={'CODCLIENTE': str})  # Forzar `CODCLIENTE` como string
-
-            # Validar si las columnas requeridas están presentes
-            if 'CODCLIENTE' not in data.columns or 'ACCIONCOMERCIAL' not in data.columns:
-                print(f"Hoja '{sheet_name}' no tiene las columnas requeridas. Saltando...")
-                continue
-
-            for _, row in data.iterrows():
-                codcliente = row['CODCLIENTE'].zfill(13)  # Asegurarse de que tenga 13 dígitos
-                accion_comercial = row['ACCIONCOMERCIAL']
-
-                # Ignorar filas con datos faltantes
-                if pd.isnull(codcliente) or pd.isnull(accion_comercial):
-                    print(f"Fila inválida en hoja '{sheet_name}' (Datos faltantes). Saltando...")
-                    continue
-
-                # Validar si la acción comercial existe
-                cursor.execute("SELECT CODAccionComercial FROM AccionesComerciales WHERE Descripcion = ?", (accion_comercial,))
-                accion_row = cursor.fetchone()
-                if not accion_row:
-                    print(f"Acción comercial '{accion_comercial}' no existe. Saltando...")
-                    continue
-
-                codaccion = accion_row[0]
-
-                # Verificar si la relación cliente-acción ya existe
-                cursor.execute("""
-                    SELECT COUNT(*) FROM ClienteAccionComercial
-                    WHERE CODCLIENTE = ? AND CODAccionComercial = ?
-                """, (codcliente, codaccion))
-                if cursor.fetchone()[0] > 0:
-                    print(f"Cliente {codcliente} ya tiene la acción comercial '{accion_comercial}'. Saltando...")
-                    continue
-
-                # Insertar relación cliente-acción comercial
+            # Insertar los datos verificados
+            for dato in datos:
                 cursor.execute("""
                     INSERT INTO ClienteAccionComercial (CODCLIENTE, CODAccionComercial)
                     VALUES (?, ?)
-                """, (codcliente, codaccion))
+                """, (dato['codcliente'], dato['codaccion']))
 
-        conexion.commit()
-        print("Datos procesados exitosamente.")
+            conexion.commit()
 
+        return jsonify({"success": "Datos insertados correctamente."}), 200
 
+    except Exception as e:
+        return jsonify({"error": f"Error al insertar los datos: {e}"}), 500    
+
+def procesar_excel(file_stream):
+    datos_verificados = []
+    errores = []
+
+    try:
+        df = pd.ExcelFile(file_stream)
+
+        with pyodbc.connect(conexion_str) as conexion:
+            cursor = conexion.cursor()
+
+            cursor.execute("SELECT CODAccionComercial, Descripcion FROM AccionesComerciales")
+            acciones = {descripcion: codaccion for codaccion, descripcion in cursor.fetchall()}
+
+            for sheet_name in df.sheet_names:
+                data = df.parse(sheet_name, dtype={'CODCLIENTE': str})
+
+                if 'CODCLIENTE' not in data.columns or 'ACCIONCOMERCIAL' not in data.columns:
+                    errores.append(f"Hoja '{sheet_name}' no tiene las columnas requeridas.")
+                    continue
+
+                data = data.drop_duplicates(subset=['CODCLIENTE', 'ACCIONCOMERCIAL'])
+
+                for _, row in data.iterrows():
+                    try:
+                        codcliente = row['CODCLIENTE'].zfill(13)
+                        accion_comercial = row['ACCIONCOMERCIAL']
+
+                        if pd.isnull(codcliente) or pd.isnull(accion_comercial):
+                            errores.append(f"Fila inválida en hoja '{sheet_name}' (Datos faltantes).")
+                            continue
+
+                        codaccion = acciones.get(accion_comercial)
+                        if not codaccion:
+                            errores.append(f"Acción comercial '{accion_comercial}' no existe.")
+                            continue
+
+                        cursor.execute("""
+                            SELECT COUNT(*) FROM ClienteAccionComercial
+                            WHERE CODCLIENTE = ? AND CODAccionComercial = ?
+                        """, (codcliente, codaccion))
+                        if cursor.fetchone()[0] > 0:
+                            errores.append(f"Cliente {codcliente} ya tiene la acción comercial '{accion_comercial}'.")
+                            continue
+
+                        datos_verificados.append({
+                            "codcliente": codcliente,
+                            "accion_comercial": accion_comercial,
+                            "codaccion": codaccion
+                        })
+
+                    except Exception as e:
+                        errores.append(f"Error en fila {_}: {e}")
+
+        datos_verificados = list({(d['codcliente'], d['codaccion']): d for d in datos_verificados}.values())
+
+    except Exception as e:
+        errores.append(f"Error al procesar el archivo: {e}")
+
+    return datos_verificados, errores
 
 # CRUD para AccionesComerciales
 @acciones_clientes.route('/acciones', methods=['GET', 'POST'])
@@ -238,6 +278,18 @@ def clientes_accion():
                                            acciones_comerciales=acciones_comerciales, 
                                            usuario=datos_usuario)
 
+                # Verificar si el cliente ya tiene la acción comercial
+                cursor.execute("""
+                    SELECT COUNT(*) FROM ClienteAccionComercial
+                    WHERE CODCLIENTE = ? AND CODAccionComercial = ?
+                """, (codcliente, codaccion))
+                if cursor.fetchone()[0] > 0:
+                    return render_template('clientes_accion.html', 
+                                           error="El cliente ya tiene esta acción comercial.", 
+                                           clientes_accion=clientes_accion, 
+                                           acciones_comerciales=acciones_comerciales, 
+                                           usuario=datos_usuario)
+
                 # Insertar la acción comercial para el cliente
                 cursor.execute("INSERT INTO ClienteAccionComercial (CODCLIENTE, CODAccionComercial) VALUES (?, ?)", 
                                (codcliente, codaccion))
@@ -260,7 +312,6 @@ def clientes_accion():
                            acciones_comerciales=acciones_comerciales, 
                            clientes_accion=clientes_accion, 
                            usuario=datos_usuario)
-
 
 
 def get_clientes_accion():
@@ -286,7 +337,7 @@ def fetch_clientes_accion_paginated():
         draw = int(request.args.get('draw', 1))  # Control de DataTables
         start = int(request.args.get('start', 0))  # Desde qué registro comenzar
         length = int(request.args.get('length', 10))  # Cuántos registros obtener
-        search_value = request.args.get('search[value]', '')  # Filtro de búsqueda
+        search_value = request.args.get('searchValue', '')  # Valor de búsqueda
 
         with pyodbc.connect(conexion_str) as conexion:
             cursor = conexion.cursor()
@@ -327,6 +378,8 @@ def fetch_clientes_accion_paginated():
                 'NombreClienteLegal': cliente[2],
                 'NombreComercial': cliente[3],
                 'Descripcion': cliente[4],
+                'edit_url': url_for('acciones_clientes.edit_cliente_accion', codcliente=cliente[0], codaccion=cliente[1]),
+                'delete_url': url_for('acciones_clientes.delete_cliente_accion', codcliente=cliente[0], codaccion=cliente[1])
             }
             for cliente in clientes_accion
         ]

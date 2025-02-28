@@ -3,264 +3,539 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INTRODUCCION DE ENVASE</title>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.png') }}">
-
-    <style>
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/plugins.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/kaiadmin.css') }}">
+    <title>Estadistica Comercial</title>
+    <script src="{{ url_for('static', filename= 'js/js/plugin/webfont/webfont.min.js') }}"></script>
+	<script>
+		WebFont.load({
+			google: {"families":["Public Sans:300,400,500,600,700"]},
+			custom: {"families":["Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands", "simple-line-icons"], urls: ["{{ url_for('static', filename='css/fonts.min.css')}}"]},
+			active: function() {
+				sessionStorage.fonts = true;
+			}
+		});
+	</script>    
 </head>
 <body>
-    
-    <div id="containerPromorack" class="container active">
-        <button onclick="location.href='/'" class="inicio">Volver al Inicio</button>
-        <h1>Introducción de Envase</h1>
-        <form id="envaseForm" enctype="multipart/form-data">
-        
-        <label for="cliente" >Cliente:</label>
-        <select id="cliente" name ="CODCliente">
-            <option value="">Selecciona un cliente</option>
-        </select>
-        <br>
-            
-        <label for="identidad">No. de Identidad:</label>
-        <input type="text" id="identidad" name="NumeroIdentidadCliente" readonly>
-        <br>
-        
-        <label for="nombreNegocio">Nombre de Negocio:</label>
-        <input type="text" id="nombreNegocio" name="NombreComercial" readonly>
-        <br>
-        
-        <label for="direccion">Dirección:</label>
-        <input type="text" id="direccion" name="DireccionNegocio" readonly>
-        <br>
-        
-        <label for="motivo">Motivo:</label>
-        <input type="text" id="motivo" name="Motivo">
-        <br>
-        
-        <label for="beneficio">Beneficio:</label>
-        <input type="text" id="beneficio" name="Beneficio">
-        <br>
-        
-        <label for="fecha">Fecha:</label>
-        <input type="date" id="fecha" name="Fecha" readonly>
-        <br>
-
-
-        <label>Introducción:</label>
-        <div class="checkbox-group">
-            <label><input type="checkbox" class="intro-checkbox" id="cc" name="Introduccion" value="cc"> C/C</label>
-            <label><input type="checkbox" class="intro-checkbox" id="sc" name="Introduccion" value="sc"> S/C</label>
+    <div class="wrapper">
+        <div class="sidebar sidebar-style-2" data-background-color="dark2">
+            <div class="sidebar-logo">
+                <div class="logo-header" data-background-color="dark2">
+                    <a href="/home" class="logo">
+                        <img src="{{ url_for('static', filename='images/LOGO STAFF.png') }}" alt="navbar brand" class="navbar-brand" height="75">
+                    </a>
+                    <div class="nav-toggle">
+                        <button class="btn btn-toggle toggle-sidebar">
+                           <i class="gg-menu-right"></i>
+                        </button>
+                        <button class="btn btn-toggle sidenav-toggler">
+                            <i class="gg-menu-left"></i>
+                        </button>
+                    </div>
+                    <button class="topbar-toggler more">
+                        <i class="gg-more-vertical-alt"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="sidebar-wrapper scrollbar scrollbar-inner">
+                <div class="sidebar-content">
+                    <ul class="nav nav-info">
+                        <li class="nav-item ">
+                            <a href="/home">
+                                <i class="fas fa-home"></i>
+                                <p>Inicio</p>
+                            </a>
+                        </li>
+                        <li class="nav-item active">
+                            <a href="/usuario/intro_envase">
+                                <i class="fas fa-truck"></i>
+                                <p>Envase</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/usuario/promorack">
+                                    <i class="fas fa-chart-line"></i>
+                                <p>Promorack</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/auth/perfil">
+                                <i class="fas fa-user"></i>
+                                <p>Perfil</p>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <br>
 
-        <label for="ruta">No. de Ruta:</label>
-        <select id="ruta" name="Ruta">
-            <option value="">Selecciona una ruta</option>
-            <option value="01">01</option>
-            <option value="02">02</option>
-            <option value="03">03</option>
-            <option value="04">04</option>
-            <option value="05">05</option>
-            <option value="06">06</option>
-            <option value="07">07</option>
-            <option value="08">08</option>
-            <option value="09">09</option>
-            <option value="10">10</option>
-            <option value="11">11</option>
-            <option value="12">12</option>
-            <option value="13">13</option>
-            <option value="14">14</option>
-            <option value="15">15</option>
-            <option value="16">16</option>
-            <option value="17">17</option>
-            <option value="18">18</option>
-            <option value="19">19</option>
-            <option value="20">20</option>
-            <option value="21">21</option>
-            <option value="22">22</option>
-            <option value="23">23</option>
-            <option value="24">24</option>
-            <option value="25">25</option>
-            <option value="26">26</option>
-            <option value="27 - PRI">27 - PRI</option>
-            <option value="28">28</option>
-            <option value="29">29</option>
-            <option value="30">30</option>
-            <option value="31">31</option>
-            <option value="32">32</option>
-            <option value="33">33</option>
-            <option value="34">34</option>
-            <option value="35">35</option>
-            <option value="36">36</option>
-            <option value="37">37</option>
-            <option value="38">38</option>
-            <option value="39">39</option>
-            <option value="40">40</option>
-            <option value="42">42</option>
-            <option value="43">43</option>
-            <option value="44">44</option>
-            <option value="45">45</option>
-            <option value="46">46</option>
-            <option value="47">47</option>
-            <option value="90 - PRI">90 - PRI</option>
-            <option value="91 - PRI">91 - PRI</option>
-            <option value="601">601</option>
-            <option value="602">602</option>
-            <option value="603">603</option>
-            <option value="604">604</option>
-            <option value="900 - Delivery">900 - Delivery</option>
-            <option value="901 - PRI">901 - PRI</option>
-            <option value="903 - PRI">903 - PRI</option>
-            <option value="904 - PRI">904 - PRI</option>
-            <option value="905 - PRI">905 - PRI</option>
-            <option value="906 - PRI">906 - PRI</option>
-            <option value="907 - PRI">907 - PRI</option>
-            <option value="908 - PRI">908 - PRI</option>
-            <option value="950">950</option>
-            <option value="951">951</option>
-            <option value="952">952</option>
-            <option value="2002">2002</option>
-            <option value="7002">7002</option>
-            <option value="7003">7003</option>
-            <option value="7004">7004</option>
-            <option value="7005">7005</option>
-            <option value="7006">7006</option>
-            <option value="7007">7007</option>
-            <option value="7008">7008</option>
-            <option value="7009">7009</option>
-            <option value="7010">7010</option>
-            <option value="7011">7011</option>
-            <option value="7012">7012</option>
-            <option value="7013">7013</option>
-            <option value="7014">7014</option>
-            <option value="8001">8001</option>
-            <option value="8002">8002</option>
-            <option value="8003">8003</option>
-            <option value="8004">8004</option>
-            <option value="8005">8005</option>
-            <option value="8006">8006</option>
-            <option value="8007">8007</option>
-            <option value="8008">8008</option>
-            <option value="8009">8009</option>
-            <option value="8010 - PRI">8010 - PRI</option>
-            <option value="8011">8011</option>
-            <option value="8013">8013</option>
-            <option value="8016">8016</option>
-            <option value="8017">8017</option>
-            <option value="8019">8019</option>
-            <option value="8020">8020</option>
-        </select>
-        <br>
+        <div class="main-panel">
+            <div class="main-header">
+                <div class="main-header-logo">
+                    <div class="logo-header" data-background-color="dark">
+                        <a href="/auth/usuario/dashboard" class="logo">
+                            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="navbar brand" class="navbar-brand" height="20">
+                        </a>
+                        <div class="nav-toggle">
+                            <button class="btn btn-toggle toggle-sidebar">
+                                <i class="gg-menu-right"></i>
+                            </button>
+                            <button class="btn btn-toggle sidenav-toggler">
+                                <i class="gg-menu-left"></i>
+                            </button>   
+                        </div>
+                        <button class="topbar-toggler more">
+                            <i class="gg-more-vertical-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
+                    <div class="container-fluid">
+                        <h1>Bienvenido</h1>
+        
+                        <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
+                            <li class="nav-item topbar-icon dropdown hidden-caret">
+                                <a class="nav-link dropdown-toggle" href="#" id="formulariosDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-clipboard-check"></i>
+                                    {% if formularios_recientes|length > 0 %}
+                                    <span class="notification">{{ formularios_recientes|length }}</span>
+                                    {% endif %}
+                                </a>
+                                <ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="formulariosDropdown">
+                                    <li>
+                                        <div class="dropdown-title">Tus formularios recientes</div>
+                                    </li>
+                                    <li>
+                                        <div class="notif-scroll scrollbar-outer">
+                                            <div class="notif-center">
+                                                {% if formularios_recientes %}
+                                                    {% for formulario in formularios_recientes %}
+                                                    <a href="{{ url_for('usuarios.perfil') }}#formulario-{{ formulario.FormularioID }}" class="notif-formulario" data-form-id="{{ formulario.FormularioID }}">
+                                                        <div class="notif-content">
+                                                            <span class="block d-flex justify-content-between">
+                                                                <span>Formulario #{{ formulario.FormularioID }}</span>
+                                                                <span class="badge 
+                                                                    {% if formulario.Estado == 'Aprobado' %}bg-success
+                                                                    {% elif formulario.Estado == 'Rechazado' %}bg-danger
+                                                                    {% else %}bg-warning{% endif %}">
+                                                                    {{ formulario.Estado }}
+                                                                </span>
+                                                            </span>
+                                                            <span class="time">{{ formulario.FechaCreacion.strftime('%d/%m/%Y %H:%M') }}</span>
+                                                        </div>
+                                                    </a>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <div class="p-2 text-center">
+                                                        No hay formularios recientes
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <a class="see-all" href="{{ url_for('usuarios.perfil') }}">
+                                            Ver todos los formularios
+                                            <i class="fa fa-angle-right"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item topbar-icon dropdown hidden-caret">
+                                <a class="nav-link" data-bs-toggle="dropdown" href="#" aria-expanded="false">
+                                    <i class="fas fa-layer-group"></i>
+                                </a>
+                                <div class="dropdown-menu quick-actions animated fadeIn">
+                                    <div class="quick-actions-header" >
+                                        <span class="title mb-1">Acciones Rápidas</span>
+                                        <span class="subtitle op-7">Shortcuts</span>
+                                    </div>
+                                    <div class="quick-actions-scroll scrollbar-outer">
+                                        <div class="quick-actions-items">
+                                            <div class="row m-0">
+                                                <a class="col-6 col-md-4 p-0" href="/usuario/intro_envase">
+                                                    <div class="quick-actions-item">
+                                                        <div class="avatar-item bg-info rounded-circle">
+                                                            <i class="fas fa-truck"></i>
+                                                        </div>
+                                                        <span class="text">Envase</span>
+                                                    </div>
+                                                </a>
+                                                <a class="col-6 col-md-4 p-0" href="/usuario/promorack">
+                                                    <div class="quick-actions-item">
+                                                        <div class="avatar-item bg-success rounded-circle">
+                                                            <i class="fas fa-chart-line"></i>
+                                                        </div>
+                                                        <span class="text">Promorack</span>
+                                                    </div>
+                                                </a>
+                                                <a class="col-6 col-md-4 p-0" href="/admin/formularios">
+                                                    <div class="quick-actions-item">
+                                                        <div class="avatar-item bg-primary rounded-circle">
+                                                            <i class="fas fa-pen-square"></i>
+                                                        </div>
+                                                        <span class="text">Formularios</span>
+                                                    </div>
+                                                </a>    
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            
+                            <li class="nav-item topbar-user dropdown hidden-caret">
+                                <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">
+                                    <span class="profile-username">
+                                        <span class="op-7">Hola,</span> <span class="fw-bold">{{ usuario.nombre }}</span>
+                                    </span>
+                                    <i class="fas fa-user-circle ms-2"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-user animated fadeIn">
+                                    <div class="dropdown-user-scroll scrollbar-outer">
+                                        <li>
+                                            <a class="dropdown-item" href="/auth/perfil">
+                                                <i class="fas fa-user me-2"></i> Perfil
+                                            </a>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="fas fa-bell me-2"></i> Notificaciones
+                                            </a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" id="toggleDarkMode" >
+                                                <i class="fas fa-moon me-2"></i> Dark Mode
+                                            </a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item text-danger" href="{{ url_for('usuarios.logout') }}">
+                                                <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                            </a>
+                                        </li>
+                                    </div>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
 
-        <div class="list-container">
-            <h2>Productos</h2>
-            <table id="productosTable">
-                <thead>
-                    <tr>
-                        <th>PRODUCTO GRB</th>
-                        <th>CANTIDAD</th>
-                        <th>PRECIO UNIT.</th>
-                        <th>TOTAL</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Pepsi 6.5 Onzas</td>
-                        <td><input type="number" class="cantidad" data-row="0" name = "Pepsi6_5oz_cant"></td>
-                        <td><input type="number" class="precio" data-row="0" name = "Pepsi6_5oz_precio" value="120" readonly></td>
-                        <td><input type="number" class="total" data-row="0" readonly></td>
-                    </tr>
-                    <tr>
-                        <td>Pepsi 12 Onzas</td>
-                        <td><input type="number" class="cantidad" data-row="1" name = "Pepsi12oz_cant"></td>
-                        <td><input type="number" class="precio" data-row="1" name = "Pepsi12oz_precio" value="220" readonly></td>
-                        <td><input type="number" class="total" data-row="1" readonly></td>
-                    </tr>
-                    <tr>
-                        <td>Pepsi 1/2 Litro</td>
-                        <td><input type="number" class="cantidad" data-row="2" name = "Pepsi500ml_cant"></td>
-                        <td><input type="number" class="precio" data-row="2" name = "Pepsi500ml_precio" value="260" readonly></td>
-                        <td><input type="number" class="total" data-row="2" readonly></td>
-                    </tr>
-                    <tr>
-                        <td>Pepsi 1.25 Litro</td>
-                        <td><input type="number" class="cantidad" data-row="3" name = "Pepsi1_25lts_cant"></td>
-                        <td><input type="number" class="precio" data-row="3" name = "Pepsi1_25lts_precio" value="280" readonly></td>
-                        <td><input type="number" class="total" data-row="3" readonly></td>
-                    </tr>
-                    <tr>
-                        <td>Mirinda Naranja 12 Onzas</td>
-                        <td><input type="number" class="cantidad" data-row="4" name = "MirindaN12oz_cant"></td>
-                        <td><input type="number" class="precio" data-row="4"  name = "MirindaN12oz_precio" value="220" readonly></td>
-                        <td><input type="number" class="total" data-row="4" readonly></td>
-                    </tr>
-                    <tr>
-                        <td>Mirinda Banana 12 Onzas</td>
-                        <td><input type="number" class="cantidad" data-row="5" name = "MirindaB12oz_cant"></td>
-                        <td><input type="number" class="precio" data-row="5"  name = "MirindaB12oz_precio" value="220" readonly></td>
-                        <td><input type="number" class="total" data-row="5" readonly></td>
-                    </tr>
-                    <tr>
-                        <td>Mirinda Uva 12 Onzas</td>
-                        <td><input type="number" class="cantidad" data-row="6" name = "MirindaU12oz_cant"></td>
-                        <td><input type="number" class="precio" data-row="6" name = "MirindaU12oz_precio" value="220" readonly></td>
-                        <td><input type="number" class="total" data-row="6" readonly></td>
-                    </tr>
-                    <tr>
-                        <td>Mirinda Naranja 1.25 Litro</td>
-                        <td><input type="number" class="cantidad" data-row="7" name = "MirindaN1_25lts_cant"></td>
-                        <td><input type="number" class="precio" data-row="7" name = "MirindaN1_25lts_precio" value="250" readonly></td>
-                        <td><input type="number" class="total" data-row="7" readonly></td>
-                    </tr>
-                    <tr>
-                        <td>7up 12 Onzas</td>
-                        <td><input type="number" class="cantidad" data-row="8" name = "sevenup12oz_cant"></td>
-                        <td><input type="number" class="precio" data-row="8" name = "sevenup12oz_precio" value="220" readonly></td>
-                        <td><input type="number" class="total" data-row="8" readonly></td>
-                    </tr>
-                    <tr>
-                        <td>Teem 12 Onzas</td>
-                        <td><input type="number" class="cantidad" data-row="9" name = "teem12oz_cant"></td>
-                        <td><input type="number" class="precio" data-row="9" name="teem12oz_precio" value="220" readonly></td>
-                        <td><input type="number" class="total" data-row="9" readonly></td>
-                    </tr>
-                    <tr>
-                        <td>Link Mandarina 6.5 Onzas</td>
-                        <td><input type="number" class="cantidad" data-row="10" name = "LinkM6_5oz_cant"></td>
-                        <td><input type="number" class="precio" data-row="10" name = "LinkM6_5oz_precio" value="100" readonly></td>
-                        <td><input type="number" class="total" data-row="10" readonly></td>
-                    </tr>
-                    <tr>
-                        <td>Link Banana 6.5 Onzas</td>
-                        <td><input type="number" class="cantidad" data-row="11" name = "LinkB6_5oz_cant"></td>
-                        <td><input type="number" class="precio" data-row="11" name = "LinkB6_5oz_precio"value="100" readonly></td>
-                        <td><input type="number" class="total" data-row="11" readonly></td>
-                    </tr>
-                    <tr>
-                        <td>Link Coco 6.5 Onzas</td>
-                        <td><input type="number" class="cantidad" data-row="12" name = "LinkC6_5oz_cant"></td>
-                        <td><input type="number" class="precio" data-row="12" name = "LinkC6_5oz_precio" value="100" readonly></td>
-                        <td><input type="number" class="total" data-row="12" readonly></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Total</strong></td>
-                        <td><input type="number" id="totalCantidad" readonly></td>
-                        <td></td>
-                        <td><input type="number" id="totalSuma" readonly></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div> 
-        <button type="button" onclick="enviarFormulario()">Enviar Datos</button> 
-    </form> 
-    <div class="alert" id="successAlert" style="display: none;">Datos enviados exitosamente.</div>
+        <div class="container">
+            <div id="containerPromorack" class="container active">
+                <div class="page-inner">
+                    <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
+                        <div>
+                            <h3 class="fw-bold mb-3">Introducción de Envase</h3>
+                            <h6 class="op-7 mb-2">Formulario para registrar envases</h6>
+                        </div>
+                        <div class="ms-md-auto py-2 py-md-0">
+                            <button onclick="location.href='/home'" class="btn btn-label-info btn-round me-2">Volver al Inicio</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card card-round">
+                                <div class="card-body">
+                                    <form id="envaseForm" enctype="multipart/form-data">
+                                        <div class="row">
+                                            <!-- Sección de datos del cliente -->
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="cliente">Cliente:</label>
+                                                    <select id="cliente" name="CODCliente" class="form-control">
+                                                        <option value="">Selecciona un cliente</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="identidad">No. de Identidad:</label>
+                                                    <input type="text" id="identidad" name="NumeroIdentidadCliente" class="form-control" readonly>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="nombreNegocio">Nombre de Negocio:</label>
+                                                    <input type="text" id="nombreNegocio" name="NombreComercial" class="form-control" readonly>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="direccion">Dirección:</label>
+                                                    <input type="text" id="direccion" name="DireccionNegocio" class="form-control" readonly>
+                                                </div>
+                                            </div>
+        
+                                            <!-- Sección de motivo, beneficio y fecha -->
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="motivo">Motivo:</label>
+                                                    <input type="text" id="motivo" name="Motivo" class="form-control">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="beneficio">Beneficio:</label>
+                                                    <input type="text" id="beneficio" name="Beneficio" class="form-control">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="fecha">Fecha:</label>
+                                                    <input type="date" id="fecha" name="Fecha" class="form-control" readonly>
+                                                </div>
+                                            </div>
+        
+                                            <!-- Sección de introducción y ruta -->
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Introducción:</label>
+                                                    <div class="checkbox-group">
+                                                        <label class="form-check">
+                                                            <input type="checkbox" class="form-check-input intro-checkbox" id="cc" name="Introduccion" value="cc">
+                                                            <span class="form-check-label">C/C</span>
+                                                        </label>
+                                                        <label class="form-check">
+                                                            <input type="checkbox" class="form-check-input intro-checkbox" id="sc" name="Introduccion" value="sc">
+                                                            <span class="form-check-label">S/C</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="ruta">No. de Ruta:</label>
+                                                    <select id="ruta" name="Ruta" class="form-control">
+                                                        <option value="">Selecciona una ruta</option>
+                                                        <option value="">Selecciona una ruta</option>
+                                                        <option value="01">01</option>
+                                                        <option value="02">02</option>
+                                                        <option value="03">03</option>
+                                                        <option value="04">04</option>
+                                                        <option value="05">05</option>
+                                                        <option value="06">06</option>
+                                                        <option value="07">07</option>
+                                                        <option value="08">08</option>
+                                                        <option value="09">09</option>
+                                                        <option value="10">10</option>
+                                                        <option value="11">11</option>
+                                                        <option value="12">12</option>
+                                                        <option value="13">13</option>
+                                                        <option value="14">14</option>
+                                                        <option value="15">15</option>
+                                                        <option value="16">16</option>
+                                                        <option value="17">17</option>
+                                                        <option value="18">18</option>
+                                                        <option value="19">19</option>
+                                                        <option value="20">20</option>
+                                                        <option value="21">21</option>
+                                                        <option value="22">22</option>
+                                                        <option value="23">23</option>
+                                                        <option value="24">24</option>
+                                                        <option value="25">25</option>
+                                                        <option value="26">26</option>
+                                                        <option value="27 - PRI">27 - PRI</option>
+                                                        <option value="28">28</option>
+                                                        <option value="29">29</option>
+                                                        <option value="30">30</option>
+                                                        <option value="31">31</option>
+                                                        <option value="32">32</option>
+                                                        <option value="33">33</option>
+                                                        <option value="34">34</option>
+                                                        <option value="35">35</option>
+                                                        <option value="36">36</option>
+                                                        <option value="37">37</option>
+                                                        <option value="38">38</option>
+                                                        <option value="39">39</option>
+                                                        <option value="40">40</option>
+                                                        <option value="42">42</option>
+                                                        <option value="43">43</option>
+                                                        <option value="44">44</option>
+                                                        <option value="45">45</option>
+                                                        <option value="46">46</option>
+                                                        <option value="47">47</option>
+                                                        <option value="90 - PRI">90 - PRI</option>
+                                                        <option value="91 - PRI">91 - PRI</option>
+                                                        <option value="601">601</option>
+                                                        <option value="602">602</option>
+                                                        <option value="603">603</option>
+                                                        <option value="604">604</option>
+                                                        <option value="900 - Delivery">900 - Delivery</option>
+                                                        <option value="901 - PRI">901 - PRI</option>
+                                                        <option value="903 - PRI">903 - PRI</option>
+                                                        <option value="904 - PRI">904 - PRI</option>
+                                                        <option value="905 - PRI">905 - PRI</option>
+                                                        <option value="906 - PRI">906 - PRI</option>
+                                                        <option value="907 - PRI">907 - PRI</option>
+                                                        <option value="908 - PRI">908 - PRI</option>
+                                                        <option value="950">950</option>
+                                                        <option value="951">951</option>
+                                                        <option value="952">952</option>
+                                                        <option value="2002">2002</option>
+                                                        <option value="7002">7002</option>
+                                                        <option value="7003">7003</option>
+                                                        <option value="7004">7004</option>
+                                                        <option value="7005">7005</option>
+                                                        <option value="7006">7006</option>
+                                                        <option value="7007">7007</option>
+                                                        <option value="7008">7008</option>
+                                                        <option value="7009">7009</option>
+                                                        <option value="7010">7010</option>
+                                                        <option value="7011">7011</option>
+                                                        <option value="7012">7012</option>
+                                                        <option value="7013">7013</option>
+                                                        <option value="7014">7014</option>
+                                                        <option value="8001">8001</option>
+                                                        <option value="8002">8002</option>
+                                                        <option value="8003">8003</option>
+                                                        <option value="8004">8004</option>
+                                                        <option value="8005">8005</option>
+                                                        <option value="8006">8006</option>
+                                                        <option value="8007">8007</option>
+                                                        <option value="8008">8008</option>
+                                                        <option value="8009">8009</option>
+                                                        <option value="8010 - PRI">8010 - PRI</option>
+                                                        <option value="8011">8011</option>
+                                                        <option value="8013">8013</option>
+                                                        <option value="8016">8016</option>
+                                                        <option value="8017">8017</option>
+                                                        <option value="8019">8019</option>
+                                                        <option value="8020">8020</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+        
+                                        <!-- Tabla de productos -->
+                                        <div class="row mt-4">
+                                            <div class="col-md-12">
+                                                <div class="card card-round">
+                                                    <div class="card-body">
+                                                        <h4 class="card-title">Productos</h4>
+                                                        <table id="productosTable" class="table table-bordered">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>PRODUCTO GRB</th>
+                                                                    <th>CANTIDAD</th>
+                                                                    <th>PRECIO UNIT.</th>
+                                                                    <th>TOTAL</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>Pepsi 6.5 Onzas</td>
+                                                                    <td><input type="number" class="cantidad" data-row="0" name = "Pepsi6_5oz_cant"></td>
+                                                                    <td><input type="number" class="precio" data-row="0" name = "Pepsi6_5oz_precio" value="120" readonly></td>
+                                                                    <td><input type="number" class="total" data-row="0" readonly></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Pepsi 12 Onzas</td>
+                                                                    <td><input type="number" class="cantidad" data-row="1" name = "Pepsi12oz_cant"></td>
+                                                                    <td><input type="number" class="precio" data-row="1" name = "Pepsi12oz_precio" value="220" readonly></td>
+                                                                    <td><input type="number" class="total" data-row="1" readonly></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Pepsi 1/2 Litro</td>
+                                                                    <td><input type="number" class="cantidad" data-row="2" name = "Pepsi500ml_cant"></td>
+                                                                    <td><input type="number" class="precio" data-row="2" name = "Pepsi500ml_precio" value="260" readonly></td>
+                                                                    <td><input type="number" class="total" data-row="2" readonly></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Pepsi 1.25 Litro</td>
+                                                                    <td><input type="number" class="cantidad" data-row="3" name = "Pepsi1_25lts_cant"></td>
+                                                                    <td><input type="number" class="precio" data-row="3" name = "Pepsi1_25lts_precio" value="280" readonly></td>
+                                                                    <td><input type="number" class="total" data-row="3" readonly></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Mirinda Naranja 12 Onzas</td>
+                                                                    <td><input type="number" class="cantidad" data-row="4" name = "MirindaN12oz_cant"></td>
+                                                                    <td><input type="number" class="precio" data-row="4"  name = "MirindaN12oz_precio" value="220" readonly></td>
+                                                                    <td><input type="number" class="total" data-row="4" readonly></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Mirinda Banana 12 Onzas</td>
+                                                                    <td><input type="number" class="cantidad" data-row="5" name = "MirindaB12oz_cant"></td>
+                                                                    <td><input type="number" class="precio" data-row="5"  name = "MirindaB12oz_precio" value="220" readonly></td>
+                                                                    <td><input type="number" class="total" data-row="5" readonly></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Mirinda Uva 12 Onzas</td>
+                                                                    <td><input type="number" class="cantidad" data-row="6" name = "MirindaU12oz_cant"></td>
+                                                                    <td><input type="number" class="precio" data-row="6" name = "MirindaU12oz_precio" value="220" readonly></td>
+                                                                    <td><input type="number" class="total" data-row="6" readonly></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Mirinda Naranja 1.25 Litro</td>
+                                                                    <td><input type="number" class="cantidad" data-row="7" name = "MirindaN1_25lts_cant"></td>
+                                                                    <td><input type="number" class="precio" data-row="7" name = "MirindaN1_25lts_precio" value="250" readonly></td>
+                                                                    <td><input type="number" class="total" data-row="7" readonly></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>7up 12 Onzas</td>
+                                                                    <td><input type="number" class="cantidad" data-row="8" name = "sevenup12oz_cant"></td>
+                                                                    <td><input type="number" class="precio" data-row="8" name = "sevenup12oz_precio" value="220" readonly></td>
+                                                                    <td><input type="number" class="total" data-row="8" readonly></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Teem 12 Onzas</td>
+                                                                    <td><input type="number" class="cantidad" data-row="9" name = "teem12oz_cant"></td>
+                                                                    <td><input type="number" class="precio" data-row="9" name="teem12oz_precio" value="220" readonly></td>
+                                                                    <td><input type="number" class="total" data-row="9" readonly></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Link Mandarina 6.5 Onzas</td>
+                                                                    <td><input type="number" class="cantidad" data-row="10" name = "LinkM6_5oz_cant"></td>
+                                                                    <td><input type="number" class="precio" data-row="10" name = "LinkM6_5oz_precio" value="100" readonly></td>
+                                                                    <td><input type="number" class="total" data-row="10" readonly></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Link Banana 6.5 Onzas</td>
+                                                                    <td><input type="number" class="cantidad" data-row="11" name = "LinkB6_5oz_cant"></td>
+                                                                    <td><input type="number" class="precio" data-row="11" name = "LinkB6_5oz_precio"value="100" readonly></td>
+                                                                    <td><input type="number" class="total" data-row="11" readonly></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Link Coco 6.5 Onzas</td>
+                                                                    <td><input type="number" class="cantidad" data-row="12" name = "LinkC6_5oz_cant"></td>
+                                                                    <td><input type="number" class="precio" data-row="12" name = "LinkC6_5oz_precio" value="100" readonly></td>
+                                                                    <td><input type="number" class="total" data-row="12" readonly></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>Total</strong></td>
+                                                                    <td><input type="number" id="totalCantidad" readonly></td>
+                                                                    <td></td>
+                                                                    <td><input type="number" id="totalSuma" readonly></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+        
+                                        <!-- Botón de enviar y alerta -->
+                                        <div class="row mt-4">
+                                            <div class="col-md-12 text-center">
+                                                <button type="button" onclick="enviarFormulario()" class="btn btn-primary btn-round">Enviar Datos</button>
+                                                <div class="alert alert-success mt-3" id="successAlert" style="display: none;">Datos enviados exitosamente.</div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <p>&copy; 2024 Todos los derechos reservados.</p>
+        </div>
     </div>
+</div>
+
+    <script src="{{ url_for('static', filename='js/js/core/jquery-3.7.1.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/js/core/popper.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/js/core/bootstrap.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js')}}"></script>
+    
+    <script src="{{ url_for('static', filename='js/js/plugin/chart.js/chart.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/js/plugin/jquery.sparkline/jquery.sparkline.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/js/plugin/chart-circle/circles.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/js/plugin/datatables/datatables.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/js/plugin/bootstrap-notify/bootstrap-notify.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/js/plugin/sweetalert/sweetalert.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/js/kaiadmin.min.js')}}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="{{ url_for('static', filename='js/intro_envase.js') }}"></script>    
+
+    <script src="{{ url_for('static', filename='js/dashboard.js')}}"></script>
 </body>
 </html>

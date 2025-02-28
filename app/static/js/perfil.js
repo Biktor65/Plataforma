@@ -105,4 +105,54 @@ async function actualizarPerfil() {
     }
 }
 
+function cargarDetalles(formularioId) {
+    fetch(`/admin/api/formularios/${formularioId}`)
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('modalId').textContent = formularioId;
+        const detalles = document.getElementById('detallesFormulario');
+        
+        let html = `
+            <div class="mb-3">
+                <h5>Estado: <span class="badge ${obtenerClaseEstado(data.Estado)}">${data.Estado}</span></h5>
+                <p>Fecha de creación: ${new Date(data.FechaCreacion).toLocaleString()}</p>
+            </div>`;
+        
+        if(data.Detalles && data.Detalles.length > 0) {
+            html += `<div class="row">`;
+            data.Detalles.forEach((detalle, index) => {
+                html += `
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6>Registro ${index + 1}</h6>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Centro:</strong> ${detalle.Centro || 'N/A'}</p>
+                            <p><strong>Jefe de Zona:</strong> ${detalle.JefeZona || 'N/A'}</p>
+                            <p><strong>Ruta:</strong> ${detalle.Ruta || 'N/A'}</p>
+                            <p><strong>Código Cliente:</strong> ${detalle.CODCliente || 'N/A'}</p>
+                            <p><strong>Nombre Cliente:</strong> ${detalle.NombreCliente || 'N/A'}</p>
+                        </div>
+                    </div>
+                </div>`;
+            });
+            html += `</div>`;
+        }
+        
+        detalles.innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        detalles.innerHTML = '<div class="alert alert-danger">Error al cargar los detalles</div>';
+    });
+}
+function obtenerClaseEstado(estado) {
+    switch(estado) {
+        case 'Aprobado': return 'bg-success';
+        case 'Rechazado': return 'bg-danger';
+        default: return 'bg-warning';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', obtenerPerfil);

@@ -49,27 +49,21 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="/admin/clientes_accion">
-                            <i class="fas fa-users"></i>
-                            <p>Clientes</p>
+                        <a href="/usuario/intro_envase">
+                            <i class="fas fa-truck"></i>
+                            <p>Envase</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="/admin/acciones">
+                        <a href="/usuario/promorack">
                             <i class="fas fa-chart-line"></i>
-                            <p>Acciones Comerciales</p>
+                            <p>Promorack</p>
                         </a>
                     </li>
                     <li class="nav-item active">
                         <a href="/auth/perfil">
                             <i class="fas fa-user"></i>
                             <p>Perfil</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/admin/formularios">
-                            <i class="fas fa-pen-square"></i>
-                            <p>Formulario</p>
                         </a>
                     </li>
                 </ul>
@@ -106,63 +100,53 @@
 
             <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
                 <li class="nav-item topbar-icon dropdown hidden-caret">
-                    <a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-bell"></i>
-                        <span class="notification">4</span>
+                    <a class="nav-link dropdown-toggle" href="#" id="formulariosDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-clipboard-check"></i>
+                        {% if formularios_recientes|length > 0 %}
+                        <span class="notification">{{ formularios_recientes|length }}</span>
+                        {% endif %}
                     </a>
-                    <ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="notifDropdown">
+                    <ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="formulariosDropdown">
                         <li>
-                            <div class="dropdown-title">You have 4 new notification</div>
+                            <div class="dropdown-title">Formularios Recientes</div>
                         </li>
                         <li>
                             <div class="notif-scroll scrollbar-outer">
                                 <div class="notif-center">
-                                    <a href="#">
-                                        <div class="notif-icon notif-primary"> <i class="fa fa-user-plus"></i> </div>
-                                        <div class="notif-content">
-                                            <span class="block">
-                                                New user registered
-                                            </span>
-                                            <span class="time">5 minutes ago</span> 
+                                    {% if formularios_recientes %}
+                                        {% for formulario in formularios_recientes %}
+                                        <a href="{{ url_for('usuarios.perfil') }}#formulario-{{ formulario.FormularioID }}" class="notif-formulario" data-form-id="{{ formulario.FormularioID }}">
+                                            <div class="notif-content">
+                                                <span class="block d-flex justify-content-between">
+                                                    <span>Formulario #{{ formulario.FormularioID }}</span>
+                                                    <span class="badge 
+                                                        {% if formulario.Estado == 'Aprobado' %}bg-success
+                                                        {% elif formulario.Estado == 'Rechazado' %}bg-danger
+                                                        {% else %}bg-warning{% endif %}">
+                                                        {{ formulario.Estado }}
+                                                    </span>
+                                                </span>
+                                                <span class="time">{{ formulario.FechaCreacion.strftime('%d/%m/%Y %H:%M') }}</span>
+                                            </div>
+                                        </a>
+                                        {% endfor %}
+                                    {% else %}
+                                        <div class="p-2 text-center">
+                                            No hay formularios recientes
                                         </div>
-                                    </a>
-                                    <a href="#">
-                                        <div class="notif-icon notif-success"> <i class="fa fa-comment"></i> </div>
-                                        <div class="notif-content">
-                                            <span class="block">
-                                                Rahmad commented on Admin
-                                            </span>
-                                            <span class="time">12 minutes ago</span> 
-                                        </div>
-                                    </a>
-                                    <a href="#">
-                                        <div class="notif-img"> 
-                                            <img src="assets/img/profile2.jpg" alt="Img Profile">
-                                        </div>
-                                        <div class="notif-content">
-                                            <span class="block">
-                                                Reza send messages to you
-                                            </span>
-                                            <span class="time">12 minutes ago</span> 
-                                        </div>
-                                    </a>
-                                    <a href="#">
-                                        <div class="notif-icon notif-danger"> <i class="fa fa-heart"></i> </div>
-                                        <div class="notif-content">
-                                            <span class="block">
-                                                Farrah liked Admin
-                                            </span>
-                                            <span class="time">17 minutes ago</span> 
-                                        </div>
-                                    </a>
+                                    {% endif %}
                                 </div>
                             </div>
                         </li>
                         <li>
-                            <a class="see-all" href="javascript:void(0);">See all notifications<i class="fa fa-angle-right"></i> </a>
+                            <a class="see-all" href="{{ url_for('usuarios.perfil') }}">
+                                Ver todos los formularios
+                                <i class="fa fa-angle-right"></i>
+                            </a>
                         </li>
                     </ul>
                 </li>
+                
                 <li class="nav-item topbar-icon dropdown hidden-caret">
                     <a class="nav-link" data-bs-toggle="dropdown" href="#" aria-expanded="false">
                         <i class="fas fa-layer-group"></i>
@@ -173,32 +157,34 @@
                             <span class="subtitle op-7">Shortcuts</span>
                         </div>
                         <div class="quick-actions-scroll scrollbar-outer">
-                            <div class="quick-actions-items">
-                                <div class="row m-0">
-                                    <a class="col-6 col-md-4 p-0" href="/admin/acciones">
-                                        <div class="quick-actions-item">
-                                            <div class="avatar-item bg-info rounded-circle">
-                                                <i class="fas fa-chart-line"></i>
+                            <div class="quick-actions-scroll scrollbar-outer">
+                                <div class="quick-actions-items">
+                                    <div class="row m-0">
+                                        <a class="col-6 col-md-4 p-0" href="/usuario/intro_envase">
+                                            <div class="quick-actions-item">
+                                                <div class="avatar-item bg-info rounded-circle">
+                                                    <i class="fas fa-truck"></i>
+                                                </div>
+                                                <span class="text">Envase</span>
                                             </div>
-                                            <span class="text">Aciones Comerciales</span>
-                                        </div>
-                                    </a>
-                                    <a class="col-6 col-md-4 p-0" href="/admin/clientes_accion">
-                                        <div class="quick-actions-item">
-                                            <div class="avatar-item bg-success rounded-circle">
-                                                <i class="fas fa-users"></i>
+                                        </a>
+                                        <a class="col-6 col-md-4 p-0" href="/usuario/promorack">
+                                            <div class="quick-actions-item">
+                                                <div class="avatar-item bg-success rounded-circle">
+                                                    <i class="fas fa-chart-line"></i>
+                                                </div>
+                                                <span class="text">Promorack</span>
                                             </div>
-                                            <span class="text">Clientes</span>
-                                        </div>
-                                    </a>
-                                    <a class="col-6 col-md-4 p-0" href="/admin/formularios">
-                                        <div class="quick-actions-item">
-                                            <div class="avatar-item bg-primary rounded-circle">
-                                                <i class="fas fa-pen-square"></i>
+                                        </a>
+                                        <a class="col-6 col-md-4 p-0" href="/admin/formularios">
+                                            <div class="quick-actions-item">
+                                                <div class="avatar-item bg-primary rounded-circle">
+                                                    <i class="fas fa-pen-square"></i>
+                                                </div>
+                                                <span class="text">Formularios</span>
                                             </div>
-                                            <span class="text">Formularios</span>
-                                        </div>
-                                    </a>    
+                                        </a>    
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -239,23 +225,27 @@
 </div>
 <div class="container">
     <div class="page-inner">
-        <div class="col-md-10">
-        <div class="card card-round mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center">
-                    <div>
-                        <h4 class="mb-1 fw-bold">Perfil de Usuario</h4>
-                        <p class="text-muted mb-0">Gestiona la configuración de tu cuenta</p>
+        <div class="row">
+            <!-- Columna para la sección de Perfil y Formulario -->
+            <div class="col-md-6">
+                <!-- Sección de Perfil -->
+                <div class="card card-round mb-4">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <h4 class="card-title mb-1 fw-bold">Perfil de Usuario</h4>
+                                <p class="text-muted mb-0">Gestiona la configuración de tu cuenta</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        </div>
-        <div class="row">
-            <div class="col-md-10">
+
+                <!-- Formulario de Actualización de Perfil -->
                 <div class="card card-round">
                     <div class="card-header">
-                        <div class="card-title"><i class="fas fa-user-edit me-2"></i> Actualizar Perfil</div>
+                        <div class="card-title">
+                            <i class="fas fa-user-edit me-2"></i> Actualizar Perfil
+                        </div>
                     </div>
                     <div class="card-body">
                         <form id="perfilForm">
@@ -274,6 +264,7 @@
                                 </button>
                             </div>
             
+                            <!-- Modal para Cambiar Contraseña -->
                             <div class="modal fade" id="cambiarContraseñaModal" tabindex="-1" aria-labelledby="cambiarContraseñaModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
@@ -307,8 +298,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-            
+                            </div>            
                             <div class="form-group mt-4 text-center">
                                 <button type="button" class="btn btn-success btn-lg" onclick="actualizarPerfil()">
                                     <i class="fas fa-save me-2"></i> Guardar Cambios
@@ -316,12 +306,94 @@
                             </div>
                         </form>
                     </div>
-                </div>
+                </div>
+            </div>
+
+            <!-- Columna para el Historial de Formularios -->
+            <div class="col-md-6">
+                <!-- Sección de Formularios -->
+                <div class="card card-round mb-4">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <h4 class="card-title mb-1 fw-bold">Formularios</h4>
+                                <p class="text-muted mb-0">Historial de formularios enviados</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla de Historial de Formularios -->
+                <div class="card card-round">
+                    <div class="card-body">
+                        {% if formularios %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>ID Formulario</th>
+                                        <th>Fecha de Envío</th>
+                                        <th>Estado</th>
+                                        <th>Detalles</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for formulario in formularios %}
+                                    <tr>
+                                        <td>#{{ formulario.FormularioID }}</td>
+                                        <td>{{ formulario.FechaCreacion.strftime('%d/%m/%Y %H:%M') }}</td>
+                                        <td>
+                                            <span class="badge 
+                                                {% if formulario.Estado == 'Aprobado' %}bg-success
+                                                {% elif formulario.Estado == 'Rechazado' %}bg-danger
+                                                {% else %}bg-warning{% endif %}">
+                                                {{ formulario.Estado }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#detallesModal"
+                                                    onclick="cargarDetalles('{{ formulario.FormularioID }}')">
+                                                <i class="fas fa-eye"></i> Ver
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-info">
+                            No has enviado ningún formulario todavía.
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para ver detalles -->
+        <div class="modal fade" id="detallesModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">Detalles del Formulario #<span id="modalId"></span></h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="detallesContenido">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="detallesFormulario"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
 </div>
+
 <div class="footer">
     <p>&copy; 2024 Todos los derechos reservados.</p>
 </div>

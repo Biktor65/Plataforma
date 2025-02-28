@@ -103,12 +103,16 @@ def actualizar_formulario(formulario_id):
 
 @formularios_bp.route('/api/formularios/<int:formulario_id>', methods=['GET'])
 @login_required
-@role_required('admin')  
 def obtener_formulario(formulario_id):
     try:
-        formulario = fetch_formulario_por_id(formulario_id)  # Asegúrate de definir esta función en `models.py`
+        formulario = fetch_formulario_por_id(formulario_id)
         if "error" in formulario:
-            return jsonify({"error": formulario["error"]}), 500
+            return jsonify({"error": formulario["error"]}), 404
+            
+        usuario_actual = session.get('usuario_id')
+        if session.get('rol') != 'admin' and formulario['UsuarioID'] != usuario_actual:
+            return jsonify({"error": "No autorizado"}), 403
+            
         return jsonify(formulario), 200
     except Exception as e:
         return jsonify({"error": f"Error al obtener el formulario: {str(e)}"}), 500

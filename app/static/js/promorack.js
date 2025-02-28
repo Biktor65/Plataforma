@@ -1,47 +1,68 @@
-import { resetInputStyles, esCodigoRepetido, vaciarTablaClientesAgregados, 
-clientesAgregados, descargarClientesExcel, handleCentroChange, handleJefeZonaChange,
-verificarCondicionesCliente,incrementarContador,contadorClientes,
-disminiurContador,limpirContador,limpirContadorCambios} from './utils.js';
-
+import {
+    resetInputStyles, esCodigoRepetido, vaciarTablaClientesAgregados,
+    clientesAgregados, descargarClientesExcel, handleCentroChange, handleJefeZonaChange,
+    verificarCondicionesCliente, incrementarContador, contadorClientes,
+    disminiurContador, limpirContador, limpirContadorCambios
+} from './utils.js';
 
 export function loadPromorackData(data) {
+    console.log("Datos cargados:", data); // Depuración: Verifica los datos cargados
+
     const transformedData = data.map(item => ({
         ...item,
         Centro: item.Centro || 'No Aplica',
         JefeZona: item.JefeZona || 'No Aplica'
-    }));    
+    }));
+
     const centroSelect = $('#Centro');
     const centros = [...new Set(transformedData.map(item => item.Centro))];
     centros.forEach(Centro => centroSelect.append(new Option(Centro, Centro)));
 
-    centroSelect.select2().on('change', function() {
-        handleCentroChange(data, $(this).val(), '#jefeZona', '#cliente');
+    // Configuración de eventos sin Select2
+    centroSelect.on('change', function () {
+        const centro = $(this).val();
+        console.log("Centro seleccionado:", centro); // Depuración: Verifica el centro seleccionado
+        handleCentroChange(data, centro, '#jefeZona', '#cliente');
     });
 
-    $('#jefeZona').select2().on('change', function() {
-        handleJefeZonaChange(data, $('#Centro').val(), $(this).val(), '#cliente');
+    $('#jefeZona').on('change', function () {
+        const jefeZona = $(this).val();
+        const centro = $('#Centro').val();
+        console.log("Jefe de Zona seleccionado:", jefeZona); // Depuración: Verifica el jefe de zona seleccionado
+        handleJefeZonaChange(data, centro, jefeZona, '#cliente');
     });
 
-    $('#cliente').select2().on('change', function() {
-        handleClienteChange(data, $('#Centro').val(), $('#jefeZona').val(), $(this).val());
+    $('#cliente').on('change', function () {
+        const cliente = $(this).val();
+        const centro = $('#Centro').val();
+        const jefeZona = $('#jefeZona').val();
+        console.log("Cliente seleccionado:", cliente); // Depuración: Verifica el cliente seleccionado
+        handleClienteChange(data, centro, jefeZona, cliente);
     });
 
-    $('#verificar').on('click', function() {
-        verifyCliente(data, $('#cliente').val());
+    // Eventos de los botones
+    $('#verificar').on('click', function () {
+        const cliente = $('#cliente').val();
+        console.log("Verificando cliente:", cliente); // Depuración: Verifica el cliente a verificar
+        verifyCliente(data, cliente);
     });
 
-    $('#agregar').on('click', function() {
+    $('#agregar').on('click', function () {
+        console.log("Agregando cliente..."); // Depuración: Verifica que se esté agregando un cliente
         agregarCliente(data);
     });
-    $('#vaciarTablaPromorack').on('click', function() {
+
+    $('#vaciarTablaPromorack').on('click', function () {
+        console.log("Vaciando tabla..."); // Depuración: Verifica que se esté vaciando la tabla
         vaciarTablaClientesAgregados();
-        limpirContador(); 
+        limpirContador();
     });
 
-    $('#descargarExcel').on('click', function() {
-        descargarClientesExcel(); 
-        limpirContador(); 
-        limpirContadorCambios(); 
+    $('#descargarExcel').on('click', function () {
+        console.log("Descargando Excel..."); // Depuración: Verifica que se esté descargando el Excel
+        descargarClientesExcel();
+        limpirContador();
+        limpirContadorCambios();
     });
 }
 
@@ -49,22 +70,27 @@ function actualizarContadorClientes() {
     $('#contadorPromorack').text(`: ${contadorClientes}`);
 }
 
+function handleClienteChange(data, selectedCentro, selectedJefeZona, selectedCliente) {
+    console.log("Buscando cliente...", { selectedCentro, selectedJefeZona, selectedCliente }); // Depuración: Verifica los parámetros de búsqueda
 
-
-
-function handleClienteChange(data, selectedCentro, selectedJefeZona, selectedCliente) { 
-    const clienteData = data.find(item => 
+    const clienteData = data.find(item =>
         (item.Centro || 'No Aplica') === (selectedCentro || 'No Aplica') &&
         (item.JefeZona || 'No Aplica') === (selectedJefeZona || 'No Aplica') &&
         item.CODCliente === selectedCliente
     );
 
     if (!clienteData) {
-        $('#resultado').text('No Aplica: Cliente no encontrado en la base de datos').removeClass('aplica').addClass('no-aplica').show();
+        console.log("Cliente no encontrado"); // Depuración: Verifica si no se encontró el cliente
+        $('#resultado').text('No Aplica: Cliente no encontrado en la base de datos')
+            .removeClass('aplica')
+            .addClass('no-aplica alert alert-danger')
+            .show();
         $('#agregar, #verificar').prop('disabled', true);
         $('#NombreComercial, #NombreClienteLegal, #Cluster, #DireccionNegocio').addClass('highlight-background');
         return;
     }
+
+    console.log("Cliente encontrado:", clienteData); // Depuración: Verifica los datos del cliente encontrado
 
     // Asigna los valores del cliente encontrado a los campos
     $('#CODTerritorio').val(clienteData.CODTerritorio);
@@ -85,9 +111,9 @@ function handleClienteChange(data, selectedCentro, selectedJefeZona, selectedCli
     $('#verificar').prop('disabled', false);
 }
 
+function verifyCliente(data, selectedCliente) {
+    console.log("Verificando condiciones del cliente:", selectedCliente); // Depuración: Verifica el cliente a verificar
 
-
-function verifyCliente(data, selectedCliente) {    
     const clienteDataList = data.filter(item => item.CODCliente === selectedCliente);
 
     const resultadoElement = $('#resultado');
@@ -95,7 +121,11 @@ function verifyCliente(data, selectedCliente) {
     const mensajeElement = $('#mensaje');
 
     if (!clienteDataList.length) {
-        resultadoElement.text('No Aplica: Cliente no encontrado en la base de datos').removeClass('aplica').addClass('no-aplica').show();
+        console.log("Cliente no encontrado en la lista"); // Depuración: Verifica si no se encontró el cliente
+        resultadoElement.text('No Aplica: Cliente no encontrado en la base de datos')
+            .removeClass('aplica')
+            .addClass('no-aplica alert alert-danger')
+            .show();
         agregarButton.prop('disabled', true);
         mensajeElement.hide();
         return;
@@ -107,15 +137,24 @@ function verifyCliente(data, selectedCliente) {
     const { cumpleCondiciones, mensaje } = verificarCondicionesCliente(clienteDataList, clusterPermitidos, descripcionesExcluidas);
 
     if (cumpleCondiciones) {
-        resultadoElement.text('Aplica').removeClass('no-aplica').addClass('aplica').show();
+        console.log("Cliente cumple condiciones"); // Depuración: Verifica si el cliente cumple las condiciones
+        resultadoElement.text('Aplica')
+            .removeClass('no-aplica')
+            .addClass('aplica alert alert-success')
+            .show();
         agregarButton.prop('disabled', false);
         mensajeElement.hide();
     } else {
-        resultadoElement.text(`No Aplica: ${mensaje}`).removeClass('aplica').addClass('no-aplica').show();
+        console.log("Cliente no cumple condiciones:", mensaje); // Depuración: Verifica por qué no cumple las condiciones
+        resultadoElement.text(`No Aplica: ${mensaje}`)
+            .removeClass('aplica')
+            .addClass('no-aplica alert alert-danger')
+            .show();
         agregarButton.prop('disabled', true);
         mensajeElement.show();
     }
 }
+
 function agregarCliente(data) {
     const Centro = $('#Centro').val();
     const jefeZona = $('#jefeZona').val();
@@ -128,6 +167,7 @@ function agregarCliente(data) {
     const codigoCliente = cliente.slice(0, 13);
 
     if (esCodigoRepetido(codigoCliente)) {
+        console.log("Código de cliente repetido"); // Depuración: Verifica si el código está repetido
         $('#mensajeRepetido').show();
         return;
     }
@@ -147,6 +187,8 @@ function agregarCliente(data) {
 
     clientesAgregados.push(nuevoCliente);
 
+    console.log("Cliente agregado:", nuevoCliente); // Depuración: Verifica el cliente agregado
+
     $('#clientesAgregados tbody').append(`
         <tr>
             <td>${Centro}</td>
@@ -156,21 +198,21 @@ function agregarCliente(data) {
             <td>${NombreComercial}</td>
             <td>${NombreClienteLegal}</td>
             <td class="${['mantener', 'optimizar'].includes(Cluster.toLowerCase()) ? 'highlight-background' : ''}">${Cluster}</td>
-            <td><button class="remove-button">Eliminar</button></td>
+            <td><button class="remove-button btn btn-danger btn-sm">Eliminar</button></td>
         </tr>
     `);
 
-    incrementarContador()
+    incrementarContador();
     actualizarContadorClientes();
-    $('#descargarExcel').prop('disabled', false); 
+    $('#descargarExcel').prop('disabled', false);
 
-    $('#clientesAgregados .remove-button').last().on('click', function() {
+    $('#clientesAgregados .remove-button').last().on('click', function () {
         const index = $(this).closest('tr').index();
-        clientesAgregados.splice(index, 1); 
+        clientesAgregados.splice(index, 1);
         $(this).closest('tr').remove();
         disminiurContador();
         actualizarContadorClientes();
-        $('#descargarExcel').prop('disabled', clientesAgregados.length === 0); 
+        $('#descargarExcel').prop('disabled', clientesAgregados.length === 0);
     });
 
     resetInputStyles();
@@ -179,4 +221,3 @@ function agregarCliente(data) {
     $('#resultado, #mensaje').hide();
     $('#agregar, #verificar').prop('disabled', true);
 }
-

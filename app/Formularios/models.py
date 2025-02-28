@@ -12,32 +12,44 @@ conexion_string = (
     f"Trusted_Connection={os.getenv('Trusted_Connection')};"
 )
 
-def fetch_formularios():
+def fetch_formularios(usuario_id=None):
     try:
         with pyodbc.connect(conexion_string) as conexion:
             cursor = conexion.cursor()
-            consulta = """
+            
+            consulta_base = """
                 SELECT 
                     U.usuario, 
                     F.FormularioID, 
                     F.Estado, 
                     F.FechaCreacion  
                 FROM Formulario AS F
-                JOIN usuarios AS U ON F.UsuarioID = U.id;
+                JOIN usuarios AS U ON F.UsuarioID = U.id
             """
-            cursor.execute(consulta)
-            filas = cursor.fetchall()
             
-            formularios_con_usuario = [{
-                "Usuario": fila.usuario,
-                "FormularioID": fila.FormularioID,
-                "Estado": fila.Estado,
-                "FechaCreacion": fila.FechaCreacion
-            } for fila in filas]
+            params = []
             
-            return formularios_con_usuario
+            if usuario_id:
+                consulta_base += " WHERE F.UsuarioID = ?"
+                params.append(usuario_id)
+            
+            consulta_base += " ORDER BY F.FechaCreacion DESC"
+            
+            cursor.execute(consulta_base, params)
+            
+            formularios = []
+            for fila in cursor.fetchall():
+                formularios.append({
+                    "Usuario": fila.usuario,
+                    "FormularioID": fila.FormularioID,
+                    "Estado": fila.Estado,
+                    "FechaCreacion": fila.FechaCreacion
+                })
+            
+            return formularios
+            
     except Exception as e:
-        return {"error": f"Error al obtener formularios con usuario: {str(e)}"}
+        return {"error": f"Error al obtener formularios: {str(e)}"}
 
 def guardar_formulario(data):
     try:
@@ -126,7 +138,8 @@ def fetch_formulario_por_id(formulario_id):
                     U.usuario, 
                     F.FormularioID, 
                     F.Estado, 
-                    F.FechaCreacion  
+                    F.FechaCreacion,
+                    F.UsuarioID
                 FROM Formulario AS F
                 JOIN usuarios AS U ON F.UsuarioID = U.id
                 WHERE F.FormularioID = ?
@@ -135,14 +148,18 @@ def fetch_formulario_por_id(formulario_id):
             formulario = cursor.fetchone()
 
             if not formulario:
+                print(f"Formulario con ID {formulario_id} no encontrado.")                
                 return {"error": "Formulario no encontrado"}
 
-            # Convertir el formulario en un diccionario
+            print(f"Datos del formulario: {formulario}")
+
             formulario_dict = {
                 "Usuario": formulario.usuario,
                 "FormularioID": formulario.FormularioID,
                 "Estado": formulario.Estado,
-                "FechaCreacion": formulario.FechaCreacion
+                "FechaCreacion": formulario.FechaCreacion,
+                "UsuarioID": formulario.UsuarioID
+
             }
 
             # Obtener los detalles asociados al formulario
@@ -170,6 +187,7 @@ def fetch_formulario_por_id(formulario_id):
 
             return formulario_dict
     except Exception as e:
+        print(f"Error en fetch_formulario_por_id: {str(e)}")
         return {"error": f"Error al obtener el formulario: {str(e)}"}
 
 def eliminar_detalles_formulario(detalle_ids):

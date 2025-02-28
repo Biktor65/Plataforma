@@ -1,18 +1,26 @@
-from flask import Blueprint, render_template, jsonify, request
-from .models import fetch_promorack_data_from_sql, guardar_formulario, actualizar_estado_formulario
-from app.usuarios.views import login_required, role_required
+from flask import Blueprint, render_template, jsonify, request,session
+from .models import fetch_promorack_data_from_sql, guardar_formulario, actualizar_estado_formulario, fetch_promorack_data_for_dashboard
+from app.usuarios.views import login_required, role_required, obtener_datos_usuario_y_formularios
 import logging
 
-
 gestor_promorack_bp = Blueprint('gestor_promorack', __name__)
-
-
 
 @gestor_promorack_bp.route('/promorack')
 @login_required
 @role_required('usuario')
 def promorack_cambios():
-    return render_template('promorack_cambios.html')
+    try:
+        # Usar la función auxiliar para obtener datos reutilizables
+        datos_usuario, _, formularios_recientes = obtener_datos_usuario_y_formularios()
+
+        return render_template('promorack_cambios.html', 
+                             usuario=datos_usuario,
+                             formularios_recientes=formularios_recientes)
+    except Exception as e:
+        print("Error en intro_envase:", str(e))
+        return render_template('promorack_cambios.html',
+                             usuario={"nombre": "Desconocido", "rol": "Sin Rol"},
+                             formularios_recientes=[])
 
 @gestor_promorack_bp.route('/api/promorack',methods=['GET'])
 @login_required
@@ -53,3 +61,16 @@ def actualizar_estado_promorack(formulario_id):
     if "error" in resultado:
         return jsonify({"error": resultado["error"]}), 500
     return jsonify({"message": "Estado actualizado exitosamente"}), 200
+
+@gestor_promorack_bp.route('/api/dashboard_data', methods=['GET'])
+@login_required
+def get_dashboard_data():
+    try:
+        datos = fetch_promorack_data_for_dashboard()
+        
+        if isinstance(datos, str) and datos.startswith("Error"):
+            return jsonify({"error": datos}), 500
+        
+        return jsonify(datos), 200
+    except Exception as e:
+        return jsonify({"error": f"Error al obtener los datos del dashboard: {str(e)}"}), 500

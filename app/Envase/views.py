@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, render_template, request, redirect, url_for, session
 from .models import fetch_data_from_sql
+from app.usuarios.views import obtener_datos_usuario_y_formularios
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload, MediaIoBaseUpload
@@ -29,7 +30,18 @@ drive_service = build('drive', 'v3', credentials=credentials)
 @login_required
 @role_required('usuario')
 def intro_envase():
-    return render_template('intro_envase.html')
+    try:
+        # Usar la función auxiliar para obtener datos reutilizables
+        datos_usuario, _, formularios_recientes = obtener_datos_usuario_y_formularios()
+
+        return render_template('intro_envase.html', 
+                             usuario=datos_usuario,
+                             formularios_recientes=formularios_recientes)
+    except Exception as e:
+        print("Error en intro_envase:", str(e))
+        return render_template('intro_envase.html',
+                             usuario={"nombre": "Desconocido", "rol": "Sin Rol"},
+                             formularios_recientes=[])
 
 @clientes_bp.route('/api/clientes', methods=['GET'])
 @login_required

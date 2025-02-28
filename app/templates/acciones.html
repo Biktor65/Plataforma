@@ -43,7 +43,7 @@
             <div class="sidebar-wrapper scrollbar scrollbar-inner">
                 <div class="sidebar-content">
                     <ul class="nav nav-info">
-                        <li class="nav-item active">
+                        <li class="nav-item ">
                             <a href="/auth/admin/dashboard">
                                 <i class="fas fa-home"></i>
                                 <p>Inicio</p>
@@ -55,8 +55,8 @@
                                 <p>Clientes</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="/admin/acciones">
+                        <li class="nav-item active">
+                            <a href="/admin/acciones ">
                                 <i class="fas fa-chart-line"></i>
                                 <p>Acciones Comerciales</p>
                             </a>
@@ -239,52 +239,78 @@
         </nav>
     </div>
     <div class="container">
-            <div class="card card-round">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <div class="card-title"><i class="fas fa-chart-line me-2"></i> Acciones Comerciales</div>
-                    <button class="btn btn-primary btn-round" data-bs-toggle="modal" data-bs-target="#addAccionModal">
-                        <i class="fa fa-plus"></i> Agregar Acción
-                    </button>
-                </div>
-        
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th>Acción</th>
-                                    <th class="text-center">Editar</th>
-                                    <th class="text-center">Eliminar</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for accion in acciones %}
-                                <tr>
-                                    <td>{{ accion[1] }}</td>
-                                    <td class="text-center">
-                                        <a href="{{ url_for('acciones_clientes.edit_accion', codaccion=accion[0]) }}" class="btn btn-link btn-primary btn-sm">
-                                            <i class="fa fa-edit"></i>
-                                        </a>
-                                    </td>
-                                    <td class="text-center">
-                                        <form action="{{ url_for('acciones_clientes.delete_accion', codaccion=accion[0]) }}" method="POST" onsubmit="return confirmDelete();" style="display:inline;">
-                                            <button type="submit" class="btn btn-link btn-danger btn-sm">
-                                                <i class="fa fa-times"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-        
-                <div class="card-footer text-end">
-                    <button onclick="location.href='/'" class="btn btn-secondary">Volver al Inicio</button>
+        <div class="container mt-4">
+        <div class="card card-round">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card-title"><i class="fas fa-chart-line me-2"></i> Acciones Comerciales</div>
+                <button class="btn btn-primary btn-round" data-bs-toggle="modal" data-bs-target="#addAccionModal">
+                    <i class="fa fa-plus"></i> Agregar Acción
+                </button>
+            </div>
+    
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Acción</th>
+                                <th class="text-center">Editar</th>
+                                <th class="text-center">Eliminar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for accion in acciones %}
+                            <tr>
+                                <td>{{ accion[1] }}</td>
+                                <td class="text-center">
+                                    <!-- Botón para abrir el modal de edición -->
+                                    <button class="btn btn-link btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editAccionModal{{ accion[0] }}">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                </td>
+                                <td class="text-center">
+                                    <form action="{{ url_for('acciones_clientes.delete_accion', codaccion=accion[0]) }}" method="POST" onsubmit="return confirmDelete();" style="display:inline;">
+                                        <button type="submit" class="btn btn-link btn-danger btn-sm">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+    
+                            <!-- Modal de edición para cada acción -->
+                            <div class="modal fade" id="editAccionModal{{ accion[0] }}" tabindex="-1" role="dialog" aria-labelledby="editAccionLabel{{ accion[0] }}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-primary text-white">
+                                            <h5 class="modal-title" id="editAccionLabel{{ accion[0] }}">Editar Acción Comercial</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{{ url_for('acciones_clientes.edit_accion', codaccion=accion[0]) }}" method="POST" onsubmit="return confirmUpdate();">
+                                                <div class="form-group">
+                                                    <label for="descripcion">Nombre de la Acción</label>
+                                                    <input type="text" name="descripcion" id="descripcion" class="form-control" value="{{ accion[1] }}" required>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        
+    
+            <div class="card-footer text-end">
+                <button onclick="location.href='/home'" class="btn btn-secondary">Volver al Inicio</button>
+            </div>
+        </div>
+    
         <!-- Modal para agregar una nueva acción -->
         <div class="modal fade" id="addAccionModal" tabindex="-1" role="dialog" aria-labelledby="addAccionLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -308,10 +334,13 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>    
     <div class="footer">
         <p>&copy; 2024 Todos los derechos reservados.</p>
     </div>
-    </div>
+    
+
     </div>
     </div>
     

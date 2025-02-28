@@ -125,3 +125,66 @@ def actualizar_estado_formulario(formulario_id, estado):
         return {"message": "Estado actualizado correctamente"}
     except Exception as e:
         return {"error": f"Error al actualizar el estado: {e}"}
+
+def fetch_promorack_data_for_dashboard():
+    try:
+        # Conectar a la base de datos
+        conexion = pyodbc.connect(conexion_string)
+        
+        # Consulta SQL para obtener los datos necesarios
+        consulta = """
+        SELECT 
+            FASE, 
+            PRODUCTOS, 
+            FECHA_INICIO, 
+            FECHA_FIN, 
+            AÑO, 
+            CENTRO, 
+            CATEGORÍA, 
+            PRODUCTO, 
+            COD_CLIENTE, 
+            NOMBRE_NEGOCIO, 
+            AA, 
+            AACT, 
+            SEGMENTACION, 
+            RUTA, 
+            JEFEZONA, 
+            ESTADO_COMPRA, 
+            CLIENTES_NEGATIVOS, 
+            DESCUENTOS
+        FROM 
+            Promorack2024
+        """
+        
+        cursor = conexion.cursor()
+        cursor.execute(consulta)
+        filas = cursor.fetchall()
+        
+        # Convertir a una lista de diccionarios
+        datos = []
+        for fila in filas:
+            datos.append({
+                "FASE": fila.FASE,
+                "PRODUCTOS": fila.PRODUCTOS,
+                "FECHA_INICIO": fila.FECHA_INICIO,
+                "FECHA_FIN": fila.FECHA_FIN,
+                "AÑO": fila.AÑO,
+                "CENTRO": fila.CENTRO,
+                "CATEGORÍA": fila.CATEGORÍA,
+                "PRODUCTO": fila.PRODUCTO,
+                "COD_CLIENTE": fila.COD_CLIENTE,
+                "NOMBRE_NEGOCIO": fila.NOMBRE_NEGOCIO,
+                "AA": fila.AA,
+                "AACT": fila.AACT,
+                "SEGMENTACION": fila.SEGMENTACION,
+                "RUTA": fila.RUTA,
+                "JEFEZONA": fila.JEFEZONA,
+                "ESTADO_COMPRA": fila.ESTADO_COMPRA,
+                "CLIENTES_NEGATIVOS": fila.CLIENTES_NEGATIVOS,
+                "DESCUENTOS": fila.DESCUENTOS
+            })
+        
+        conexion.close()
+        return datos
+    except Exception as e:
+        return f"Error al descargar los datos de SQL: {e}"

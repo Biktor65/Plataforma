@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
 from app.usuarios.models import obtener_usuario, verificar_contra, obtener_perfil, actualizar_perfil,obtener_usuario_por_id
+from app.Formularios.models import fetch_formularios
 from functools import wraps
 from werkzeug.security import generate_password_hash
 
@@ -72,26 +73,32 @@ def dashboard_admin():
 @login_required
 @role_required('usuario')
 def dashboard_usuario():
-    return render_template('dashboard_usuario.html')
+    try:
+        # Usar la función auxiliar para obtener datos reutilizables
+        datos_usuario, _, formularios_recientes = obtener_datos_usuario_y_formularios()
+        
+        return render_template('dashboard_usuario.html', 
+                             usuario=datos_usuario,
+                             formularios_recientes=formularios_recientes)
+    except Exception as e:
+        print("Error en dashboard_usuario:", str(e))
+        return render_template('dashboard_usuario.html',
+                             usuario={"nombre": "Desconocido", "rol": "Sin Rol"},
+                             formularios_recientes=[])
 
 @usuarios_bp.route('/perfil')
 @login_required
 def perfil():
-    usuario_id = session.get('usuario_id')
-    usuario = obtener_usuario_por_id(usuario_id)
+    datos_usuario, formularios, formularios_recientes = obtener_datos_usuario_y_formularios()
 
-    if usuario:
-        datos_usuario = {
-            "nombre": usuario[1],  # Columna 'usuario'
-            "rol": usuario[3]  # Columna 'rol'
-        }
+    if datos_usuario["rol"] == "admin":
+        return render_template('perfil.html', usuario=datos_usuario)
     else:
-        datos_usuario = {
-            "nombre": "Desconocido",
-            "rol": "Sin Rol"
-        }
-    return render_template('perfil.html',usuario=datos_usuario)
-
+        return render_template('perfil_usuario.html', 
+                             usuario=datos_usuario,
+                             formularios=formularios,
+                             formularios_recientes=formularios_recientes)
+    
 @usuarios_bp.route('/api/get_usuario_id', methods=['GET'])
 @login_required
 def get_usuario_id():
@@ -166,3 +173,39 @@ def actualizar_perfil_vista():
         return jsonify({"mensaje": "Perfil actualizado correctamente"}), 200
     except Exception as e:
         return jsonify({"error": f"Error al actualizar el perfil: {str(e)}"}), 500
+    
+
+def obtener_datos_usuario_y_formularios():
+    try:
+        usuario_id = session.get('usuario_id')
+        usuario = obtener_usuario_por_id(usuario_id)
+
+        if usuario:
+            datos_usuario = {
+                "id": usuario[0],          
+                "nombre": usuario[1],      
+                "rol": usuario[3]         
+            }
+        else:
+            datos_usuario = {
+                "nombre": "Desconocido",
+                "rol": "Sin Rol"
+            }
+
+        # Obtener formularios del usuario
+        formularios = fetch_formularios(usuario_id)
+        if "error" in formularios:
+            print("Error al obtener formularios:", formularios["error"])
+            formularios = []
+
+        # Obtener los últimos 5 formularios
+        formularios_recientes = formularios[:5]
+
+        return datos_usuario, formularios, formularios_recientes
+
+    except Exception as e:
+        print("Error en obtener_datos_usuario_y_formularios:", str(e))
+        return {
+            "nombre": "Desconocido",
+            "rol": "Sin Rol"
+        }, [], []    

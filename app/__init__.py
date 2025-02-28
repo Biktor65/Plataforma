@@ -20,7 +20,7 @@ def create_app():
     app.register_blueprint(acciones_clientes, url_prefix='/admin')
     app.register_blueprint(usuarios_bp, url_prefix='/auth')
     
-    @app.route('/')
+    @app.route('/home')
     def home():
         if 'usuario_id' not in session:
             return redirect(url_for('usuarios.login'))

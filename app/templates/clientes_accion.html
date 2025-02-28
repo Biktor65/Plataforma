@@ -44,14 +44,14 @@
             <div class="sidebar-wrapper scrollbar scrollbar-inner">
                 <div class="sidebar-content">
                     <ul class="nav nav-info">
-                        <li class="nav-item active">
+                        <li class="nav-item ">
                             <a href="/auth/admin/dashboard">
                                 <i class="fas fa-home"></i>
                                 <p>Inicio</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="/admin/clientes_accion">
+                        <li class="nav-item active">
+                            <a href="/admin/clientes_accion ">
                                 <i class="fas fa-users"></i>
                                 <p>Clientes</p>
                             </a>
@@ -239,136 +239,186 @@
             </div>
         </nav>
     </div>
-    <div class="container">
-        <div class="container mt-4">
-            <div class="card card-round">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Clientes</h4>
-                    <button class="btn btn-primary btn-round" data-bs-toggle="modal" data-bs-target="#addClienteModal">
-                        <i class="fa fa-plus"></i> Agregar Cliente
-                    </button>
-                </div>
-        
-                <div class="card-body">
-                    {% if mensaje %}
-                        <div class="alert alert-success">{{ mensaje }}</div>
-                    {% endif %}
-                    {% if error %}
-                        <div class="alert alert-danger">{{ error }}</div>
-                    {% endif %}
-        
-                    <!-- Buscador con Diseño Mejorado -->
-                    <div class="mb-3">
-                        <label class="fw-bold">Buscar Cliente:</label>
-                        <div class="input-group">
-                            <input type="text" id="search" class="form-control" placeholder="Buscar Código Cliente" onkeyup="fetchSuggestions()">
-                            <span class="input-group-text"><i class="fa fa-search"></i></span>
-                        </div>
-                        <div id="suggestions" class="suggestions" style="display:none;"></div>
-                    </div>
-        
-                    <!-- Formulario para Cargar Excel -->
-                    <div class="mb-3">
-                        <form action="/admin/upload_excel" method="POST" enctype="multipart/form-data" id="uploadExcelForm">
-                            <label class="fw-bold">Cargar clientes desde Excel:</label>
-                            <div class="input-group">
-                                <input type="file" name="file" id="excelFile" accept=".xlsx" class="form-control" required>
-                                <button type="submit" class="btn btn-blue">Cargar</button>
-                            </div>
-                        </form>
-                    </div>
-        
-                    <!-- Tabla de Clientes -->
-                    <div class="table-responsive">
-                        <table id="clientesAccionTable" class="table table-striped table-hover">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th >Código Cliente</th>
-                                    <th>Promoción</th>
-                                    <th>Nombre Legal</th>
-                                    <th>Nombre Comercial</th>
-                                    <th class="text-center">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="clientesAccionBody">
-                                {% for cliente in clientes_accion %}
-                                <tr>
-                                    <td class="cliente-codigo">{{ cliente.CODCLIENTE }}</td>
-                                    <td>{{ cliente.Descripcion }}</td>
-                                    <td>{{ cliente.NombreClienteLegal }}</td>
-                                    <td>{{ cliente.NombreComercial }}</td>
-                                    <td class="text-center">
-                                        <a href="{{ url_for('acciones_clientes.edit_cliente_accion', codcliente=cliente.CODCLIENTE, codaccion=cliente.CODAccionComercial) }}" class="btn btn-link btn-primary btn-sm">
-                                            <i class="fa fa-edit"></i>
-                                        </a>
-                                        <form action="{{ url_for('acciones_clientes.delete_cliente_accion', codcliente=cliente.CODCLIENTE, codaccion=cliente.CODAccionComercial) }}" method="POST" onsubmit="return confirmDelete();" style="display:inline;">
-                                            <button type="submit" class="btn btn-link btn-danger btn-sm">
-                                                <i class="fa fa-times"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-        
-                <div class="card-footer text-end">
-                    <div id="paginacion" class="mt-3 text-center"></div>
-                    <button onclick="location.href='/'" class="btn btn-secondary">Volver al Inicio</button>
-                </div>
+<div class="container">
+    <div class="container mt-4">
+        <div class="card card-round">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="card-title">Clientes</h4>
+                <button class="btn btn-primary btn-round" data-bs-toggle="modal" data-bs-target="#addClienteModal">
+                    <i class="fa fa-plus"></i> Agregar Cliente
+                </button>
             </div>
-        </div>
-        
-        <!-- Modal para Agregar Cliente -->
-        <div class="modal fade" id="addClienteModal" tabindex="-1" role="dialog" aria-labelledby="addClienteLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title"><i class="fa fa-user-plus me-2"></i> Agregar Cliente</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            <div class="card-body">
+                {% if mensaje %}
+                    <div class="alert alert-success">{{ mensaje }}</div>
+                {% endif %}
+                {% if error %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+
+                <!-- Buscador con Diseño Mejorado -->
+                <div class="mb-3">
+                    <label class="fw-bold">Buscar Cliente:</label>
+                    <div class="input-group">
+                        <input type="text" id="searchTable" class="form-control" placeholder="Buscar Código Cliente">
+                        <span class="input-group-text"><i class="fa fa-search"></i></span>
                     </div>
-                    <div class="modal-body">
-                        <form action="/admin/clientes_accion" method="POST" onsubmit="return validateForm()">
-                            <div class="mb-3">
-                                <label class="fw-bold">Código Cliente:</label>
-                                <div class="input-group">
-                                    <input type="text" id="codcliente" name="codcliente" class="form-control" placeholder="Ingrese el código" required>
-                                    <button type="button" id="buscar-btn" class="btn btn-outline-secondary" onclick="buscarClientes()">Buscar</button>
+                    <div id="suggestionsTable" class="suggestions"></div> 
+                </div>
+
+                <!-- Formulario para Cargar Excel -->
+                <div class="mb-3">
+                    <label class="fw-bold">Cargar clientes desde Excel:</label>
+                    <div class="input-group">
+                        <input type="file" name="file" id="excelFile" accept=".xlsx" class="form-control" required>
+                        <button type="button" id="cargarExcelBtn" class="btn btn-blue">Cargar</button>
+                    </div>
+                </div>
+
+                <!-- Tabla de Clientes -->
+                <div class="table-responsive">
+                    <table id="clientesAccionTable" class="table table-striped table-hover">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Código Cliente</th>
+                                <th>Promoción</th>
+                                <th>Nombre Legal</th>
+                                <th>Nombre Comercial</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientesAccionBody">
+                            {% for cliente in clientes_accion %}
+                            <tr>
+                                <td class="cliente-codigo">{{ cliente.CODCLIENTE }}</td>
+                                <td>{{ cliente.Descripcion }}</td>
+                                <td>{{ cliente.NombreClienteLegal }}</td>
+                                <td>{{ cliente.NombreComercial }}</td>
+                                <td class="text-center">
+                                    <!-- Botón para abrir el modal de edición -->
+                                    <button class="btn btn-link btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editClienteModal{{ cliente.CODCLIENTE }}{{ cliente.CODAccionComercial }}">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                    <form action="{{ url_for('acciones_clientes.delete_cliente_accion', codcliente=cliente.CODCLIENTE, codaccion=cliente.CODAccionComercial) }}" method="POST" onsubmit="return confirmDelete();" style="display:inline;">
+                                        <button type="submit" class="btn btn-link btn-danger btn-sm">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <div class="modal fade" id="editClienteModal{{ cliente.CODCLIENTE }}{{ cliente.CODAccionComercial }}" tabindex="-1" role="dialog" aria-labelledby="editClienteLabel{{ cliente.CODCLIENTE }}{{ cliente.CODAccionComercial }}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-primary text-white">
+                                            <h5 class="modal-title" id="editClienteLabel{{ cliente.CODCLIENTE }}{{ cliente.CODAccionComercial }}">Editar Cliente y Acción Comercial</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{{ url_for('acciones_clientes.edit_cliente_accion', codcliente=cliente.CODCLIENTE, codaccion=cliente.CODAccionComercial) }}" method="POST" onsubmit="return confirmUpdate();">
+                                                <div class="form-group">
+                                                    <label for="codcliente">Código Cliente:</label>
+                                                    <input type="text" name="codcliente" class="form-control" value="{{ cliente.CODCLIENTE }}" readonly>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="codaccion">Seleccione Acción Comercial:</label>
+                                                    <select name="codaccion" class="form-control" required>
+                                                        {% for accion in acciones_comerciales %}
+                                                            <option value="{{ accion.CODAccionComercial }}" {% if accion.CODAccionComercial == cliente.CODAccionComercial %}selected{% endif %}>
+                                                                {{ accion.Descripcion }}
+                                                            </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-        
-                            <div id="client-info" class="mb-3" style="display:none;">
-                                <p><strong>Nombre Legal:</strong> <span id="nombreLegal"></span></p>
-                                <p><strong>Nombre Comercial:</strong> <span id="nombreComercial"></span></p>
-                                <p><strong>Promociones:</strong> <span id="promociones"></span></p>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-footer text-end">
+                <div id="paginacion" class="mt-3 text-center"></div>
+                <button onclick="location.href='/home'" class="btn btn-secondary">Volver al Inicio</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Agregar Cliente -->
+    <div class="modal fade" id="addClienteModal" tabindex="-1" role="dialog" aria-labelledby="addClienteLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title"><i class="fa fa-user-plus me-2"></i> Agregar Cliente</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/admin/clientes_accion" method="POST" onsubmit="return validateForm()">
+                        <div class="mb-3">
+                            <label class="fw-bold">Código Cliente:</label>
+                            <div class="input-group">
+                                <input type="text" id="searchModal" name="codcliente" class="form-control" placeholder="Ingrese el código" required>
                             </div>
-        
-                            <div class="mb-3">
-                                <label class="fw-bold">Añadir Promoción:</label>
-                                <select name="codaccion" class="form-select" required>
-                                    <option value="">Seleccionar Promoción</option>
-                                    {% for accion in acciones_comerciales %}
-                                        <option value="{{ accion.CODAccionComercial }}">{{ accion.Descripcion }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-        
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary">Agregar</button>
-                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                            </div>
-                        </form>
-                    </div>
+                            <div id="suggestionsModal" class="suggestions"></div> 
+                        </div>
+    
+                        <div id="client-info" class="mb-3" style="display:none;">
+                            <p><strong>Nombre Legal:</strong> <span id="nombreLegal"></span></p>
+                            <p><strong>Nombre Comercial:</strong> <span id="nombreComercial"></span></p>
+                            <p><strong>Promociones:</strong> <span id="promociones"></span></p>
+                        </div>
+    
+                        <div class="mb-3">
+                            <label class="fw-bold">Añadir Promoción:</label>
+                            <select name="codaccion" class="form-select" required>
+                                <option value="">Seleccionar Promoción</option>
+                                {% for accion in acciones_comerciales %}
+                                    <option value="{{ accion.CODAccionComercial }}">{{ accion.Descripcion }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+    
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Agregar</button>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-    <div class="footer">
-        <p>&copy; 2024 Todos los derechos reservados.</p>
     </div>
+        <!-- Modal de Confirmación -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="confirmModalLabel">Confirmar Subida</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="datosVerificados">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="confirmarSubida" class="btn btn-primary">Confirmar Subida</button>
+                </div>
+            </div>
+        </div>
     </div>
-    </div>
+</div>
+            <div class="footer">
+                <p>&copy; 2024 Todos los derechos reservados.</p>
+            </div>
+        </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>

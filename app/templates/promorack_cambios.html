@@ -3,116 +3,381 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Promorack y Cambios</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/promorack_cambios.css') }}">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/plugins.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/kaiadmin.css') }}">
+    <title>Estadistica Comercial</title>
+    <script src="{{ url_for('static', filename= 'js/js/plugin/webfont/webfont.min.js') }}"></script>
+	<script>
+		WebFont.load({
+			google: {"families":["Public Sans:300,400,500,600,700"]},
+			custom: {"families":["Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands", "simple-line-icons"], urls: ["{{ url_for('static', filename='css/fonts.min.css')}}"]},
+			active: function() {
+				sessionStorage.fonts = true;
+			}
+		});
+	</script>    
+</head>
+<body>
+    <div class="wrapper">
+        <div class="sidebar sidebar-style-2" data-background-color="dark2">
+            <div class="sidebar-logo">
+                <div class="logo-header" data-background-color="dark2">
+                    <a href="/home" class="logo">
+                        <img src="{{ url_for('static', filename='images/LOGO STAFF.png') }}" alt="navbar brand" class="navbar-brand" height="75">
+                    </a>
+                    <div class="nav-toggle">
+                        <button class="btn btn-toggle toggle-sidebar">
+                           <i class="gg-menu-right"></i>
+                        </button>
+                        <button class="btn btn-toggle sidenav-toggler">
+                            <i class="gg-menu-left"></i>
+                        </button>
+                    </div>
+                    <button class="topbar-toggler more">
+                        <i class="gg-more-vertical-alt"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="sidebar-wrapper scrollbar scrollbar-inner">
+                <div class="sidebar-content">
+                    <ul class="nav nav-info">
+                        <li class="nav-item">
+                            <a href="/home">
+                                <i class="fas fa-home"></i>
+                                <p>Inicio</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/usuario/intro_envase">
+                                <i class="fas fa-truck"></i>
+                                <p>Envase</p>
+                            </a>
+                        </li>
+                        <li class="nav-item active">
+                            <a href="/usuario/promorack">
+                                <i class="fas fa-chart-line"></i>
+                                <p>Promorack</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/auth/perfil">
+                                <i class="fas fa-user"></i>
+                                <p>Perfil</p>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-panel">
+            <div class="main-header">
+                <div class="main-header-logo">
+                    <div class="logo-header" data-background-color="dark">
+                        <a href="/auth/usuario/dashboard" class="logo">
+                            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="navbar brand" class="navbar-brand" height="20">
+                        </a>
+                        <div class="nav-toggle">
+                            <button class="btn btn-toggle toggle-sidebar">
+                                <i class="gg-menu-right"></i>
+                            </button>
+                            <button class="btn btn-toggle sidenav-toggler">
+                                <i class="gg-menu-left"></i>
+                            </button>   
+                        </div>
+                        <button class="topbar-toggler more">
+                            <i class="gg-more-vertical-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
+                    <div class="container-fluid">
+                        <h1>Bienvenido</h1>
+        
+                        <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
+                            <li class="nav-item topbar-icon dropdown hidden-caret">
+                                <a class="nav-link dropdown-toggle" href="#" id="formulariosDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-clipboard-check"></i>
+                                    {% if formularios_recientes|length > 0 %}
+                                    <span class="notification">{{ formularios_recientes|length }}</span>
+                                    {% endif %}
+                                </a>
+                                <ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="formulariosDropdown">
+                                    <li>
+                                        <div class="dropdown-title">Formularios Recientes</div>
+                                    </li>
+                                    <li>
+                                        <div class="notif-scroll scrollbar-outer">
+                                            <div class="notif-center">
+                                                {% if formularios_recientes %}
+                                                    {% for formulario in formularios_recientes %}
+                                                    <a href="{{ url_for('usuarios.perfil') }}#formulario-{{ formulario.FormularioID }}" class="notif-formulario" data-form-id="{{ formulario.FormularioID }}">
+                                                        <div class="notif-content">
+                                                            <span class="block d-flex justify-content-between">
+                                                                <span>Formulario #{{ formulario.FormularioID }}</span>
+                                                                <span class="badge 
+                                                                    {% if formulario.Estado == 'Aprobado' %}bg-success
+                                                                    {% elif formulario.Estado == 'Rechazado' %}bg-danger
+                                                                    {% else %}bg-warning{% endif %}">
+                                                                    {{ formulario.Estado }}
+                                                                </span>
+                                                            </span>
+                                                            <span class="time">{{ formulario.FechaCreacion.strftime('%d/%m/%Y %H:%M') }}</span>
+                                                        </div>
+                                                    </a>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <div class="p-2 text-center">
+                                                        No hay formularios recientes
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <a class="see-all" href="{{ url_for('usuarios.perfil') }}">
+                                            Ver todos los formularios
+                                            <i class="fa fa-angle-right"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item topbar-icon dropdown hidden-caret">
+                                <a class="nav-link" data-bs-toggle="dropdown" href="#" aria-expanded="false">
+                                    <i class="fas fa-layer-group"></i>
+                                </a>
+                                <div class="dropdown-menu quick-actions animated fadeIn">
+                                    <div class="quick-actions-header" >
+                                        <span class="title mb-1">Acciones Rápidas</span>
+                                        <span class="subtitle op-7">Shortcuts</span>
+                                    </div>
+                                    <div class="quick-actions-scroll scrollbar-outer">
+                                        <div class="quick-actions-items">
+                                            <div class="row m-0">
+                                                <a class="col-6 col-md-4 p-0" href="/admin/acciones">
+                                                    <div class="quick-actions-item">
+                                                        <div class="avatar-item bg-info rounded-circle">
+                                                            <i class="fas fa-chart-line"></i>
+                                                        </div>
+                                                        <span class="text">Aciones Comerciales</span>
+                                                    </div>
+                                                </a>
+                                                <a class="col-6 col-md-4 p-0" href="/admin/clientes_accion">
+                                                    <div class="quick-actions-item">
+                                                        <div class="avatar-item bg-success rounded-circle">
+                                                            <i class="fas fa-users"></i>
+                                                        </div>
+                                                        <span class="text">Clientes</span>
+                                                    </div>
+                                                </a>
+                                                <a class="col-6 col-md-4 p-0" href="/admin/formularios">
+                                                    <div class="quick-actions-item">
+                                                        <div class="avatar-item bg-primary rounded-circle">
+                                                            <i class="fas fa-pen-square"></i>
+                                                        </div>
+                                                        <span class="text">Formularios</span>
+                                                    </div>
+                                                </a>    
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            
+                            <li class="nav-item topbar-user dropdown hidden-caret">
+                                <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">
+                                    <span class="profile-username">
+                                        <span class="op-7">Hola,</span> <span class="fw-bold">{{ usuario.nombre }}</span>
+                                    </span>
+                                    <i class="fas fa-user-circle ms-2"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-user animated fadeIn">
+                                    <div class="dropdown-user-scroll scrollbar-outer">
+                                        <li>
+                                            <a class="dropdown-item" href="/auth/perfil">
+                                                <i class="fas fa-user me-2"></i> Perfil
+                                            </a>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="fas fa-bell me-2"></i> Notificaciones
+                                            </a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" id="toggleDarkMode" >
+                                                <i class="fas fa-moon me-2"></i> Dark Mode
+                                            </a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item text-danger" href="{{ url_for('usuarios.logout') }}">
+                                                <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                            </a>
+                                        </li>
+                                    </div>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+
+            <div class="container">
+                <!-- Tarjeta principal para agrupar todo el contenido -->
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <!-- Pestañas de navegación -->
+                        <div class="tabs text-center mb-4">
+                            <button id="tabPromorack" class="btn btn-primary active">Validación de Promorack</button>
+                            <button id="tabCambios" class="btn btn-primary">Cambios</button>
+                            <button onclick="location.href='/'" class="btn btn-secondary">Volver al Inicio</button>
+                        </div>
+            
+                        <!-- Contenedor de Validación de Promorack -->
+                        <div id="containerPromorack" class="active">
+                            <h1 class="text-center mb-4">Validación de Promorack</h1>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="Centro">Centro (Nomenclatura):</label>
+                                        <select id="Centro" class="form-control">
+                                            <option value="">Selecciona un centro</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="jefeZona">Jefe de Zona:</label>
+                                        <select id="jefeZona" class="form-control" disabled>
+                                            <option value="">Selecciona un jefe de zona</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cliente">Códigos de Cliente:</label>
+                                        <select id="cliente" class="form-control" disabled>
+                                            <option value="">Selecciona un cliente</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="CODTerritorio">Ruta:</label>
+                                        <input type="text" id="CODTerritorio" class="form-control" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="NombreComercial">Nombre de Cliente:</label>
+                                        <input type="text" id="NombreComercial" class="form-control" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="NombreClienteLegal">Nombre de Negocio:</label>
+                                        <input type="text" id="NombreClienteLegal" class="form-control" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Cluster">Tipo de Cluster:</label>
+                                        <input type="text" id="Cluster" class="form-control" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="DireccionNegocio">Dirección:</label>
+                                        <input type="text" id="DireccionNegocio" class="form-control" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button id="verificar" class="btn btn-success" disabled>Verificar</button>
+                                <button id="agregar" class="btn btn-primary" disabled>Agregar</button>
+                                <button id="descargarExcel" class="btn btn-info" disabled>Descargar Excel</button>
+                                <button id="vaciarTablaPromorack" class="btn btn-warning">Vaciar Tabla</button>
+                            </div>
+                            <p id="resultado" class="mt-2 text-muted text-center"></p>
+                            <p id="mensaje" class="detalle text-muted text-center"></p>
+                            <p id="mensajeRepetido" class="text-danger text-center" style="display: none;">Código de cliente ya agregado.</p>
+                        </div>
+            
+                        <!-- Contenedor de Cambios -->
+                        <div id="containerCambios" style="display: none;">
+                            <h1 class="text-center mb-4">Cambios</h1>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="centroCambios">Centro (Nomenclatura):</label>
+                                        <select id="centroCambios" class="form-control">
+                                            <option value="">Selecciona un centro</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="jefeZonaCambios">Jefe de Zona:</label>
+                                        <select id="jefeZonaCambios" class="form-control" disabled>
+                                            <option value="">Selecciona un jefe de zona</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="clienteCambios">Códigos de Cliente:</label>
+                                        <select id="clienteCambios" class="form-control" disabled>
+                                            <option value="">Selecciona un cliente</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="rutaCambios">Ruta:</label>
+                                        <input type="text" id="rutaCambios" class="form-control" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button id="verificarCambios" class="btn btn-success" style="display: none;" disabled>Verificar</button>
+                                <button id="agregarCambios" class="btn btn-primary" disabled>Desactivar</button>
+                                <button id="descargarExcelCambios" class="btn btn-info" disabled>Descargar Excel</button>
+                                <button id="vaciarTablaCambios" class="btn btn-warning">Vaciar Tabla</button>
+                            </div>
+                            <p id="resultadoCambios" class="mt-2 text-muted text-center"></p>
+                            <p id="mensajeCambios" class="detalle text-muted text-center"></p>
+                        </div>
+            
+                        <!-- Lista de Clientes Agregados -->
+                        <div class="mt-4">
+                            <h2 class="text-center mb-3">Clientes Agregados<span id="contadorPromorack">: 0</span></h2>
+                            <div class="table-responsive">
+                                <table id="clientesAgregados" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Centro</th>
+                                            <th>Jefe de Zona</th>
+                                            <th>Ruta</th>
+                                            <th>Código de Cliente</th>
+                                            <th>Nombre de Cliente</th>
+                                            <th>Nombre de Negocio</th>
+                                            <th>Acción</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Aquí se agregarán los clientes -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p>&copy; 2024 Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/js/core/jquery-3.7.1.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/js/core/popper.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/js/core/bootstrap.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/js/plugin/chart.js/chart.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/js/plugin/jquery.sparkline/jquery.sparkline.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/js/plugin/chart-circle/circles.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/js/plugin/datatables/datatables.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/js/plugin/bootstrap-notify/bootstrap-notify.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/js/plugin/sweetalert/sweetalert.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/js/kaiadmin.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js')}}"></script>
     <script type="module" src="{{ url_for('static', filename='js/utils.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='js/promorack.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='js/cambios.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='js/main_promorack.js') }}"></script>
-</head>
-<body>
-    <div class="tabs">
-        <button id="tabPromorack" class="active">Validación de Promorack</button>
-        <button id="tabCambios">Cambios</button>
-        <button onclick="location.href='/'" class="inicio">Volver al Inicio</button>
-    </div>
-
-    <div id="containerPromorack" class="container active">
-        <h1>Validación de Promorack</h1>
-        <label for="Centro">Centro (Nomenclatura):</label>
-        <select id="Centro">
-            <option value="">Selecciona un centro</option>
-        </select>
-        <br>
-        <label for="jefeZona">Jefe de Zona:</label>
-        <select id="jefeZona" disabled>
-            <option value="">Selecciona un jefe de zona</option>
-        </select>
-        <br>
-        <label for="cliente">Códigos de Cliente:</label>
-        <select id="cliente" disabled>
-            <option value="">Selecciona un cliente</option>
-        </select>
-        <br>
-        <label for="CODTerritorio">Ruta:</label>
-        <input type="text" id="CODTerritorio" readonly>
-        <br>
-        <label for="NombreComercial">Nombre de Cliente:</label>
-        <input type="text" id="NombreComercial" readonly>
-        <br>
-        <label for="NombreClienteLegal">Nombre de Negocio:</label>
-        <input type="text" id="NombreClienteLegal" readonly>
-        <br>
-        <label for="Cluster">Tipo de Cluster:</label>
-        <input type="text" id="Cluster" readonly>
-        <br>
-        <label for="DireccionNegocio">Dirección:</label>
-        <input type="text" id="DireccionNegocio" readonly>
-        <br>
-        <button id="verificar" disabled>Verificar</button>
-        <p id="resultado"></p>
-        <p id="mensaje" class="detalle"></p> 
-        <button id="agregar" disabled>Agregar</button>
-        <button id="descargarExcel" class="download-button" disabled>Descargar Excel</button>
-        <button id="vaciarTablaPromorack" class="clear-button">Vaciar Tabla</button>
-        <p id="mensajeRepetido" style="color: red; display: none;">Código de cliente ya agregado.</p>
-    </div>
-
-    <div id="containerCambios" class="container">
-        <h1>Cambios</h1>
-        <label for="centroCambios">Centro (Nomenclatura):</label>
-        <select id="centroCambios">
-            <option value="">Selecciona un centro</option>
-        </select>
-        <br>
-        <label for="jefeZonaCambios">Jefe de Zona:</label>
-        <select id="jefeZonaCambios" disabled>
-            <option value="">Selecciona un jefe de zona</option>
-        </select>
-        <br>
-        <label for="clienteCambios">Códigos de Cliente:</label>
-        <select id="clienteCambios" disabled>
-            <option value="">Selecciona un cliente</option>
-        </select>
-        <br>
-        <label for="rutaCambios">Ruta:</label>
-        <input type="text" id="rutaCambios" readonly>
-        <br>
-        <button id="verificarCambios" class="btn-activar" style="display: none;" disabled>Verificar</button>
-        <button id="agregarCambios" class="btn-desactivar" disabled>Desactivar</button>
-        <p id="resultadoCambios"></p>
-        <p id="mensajeCambios" class="detalle"></p>
-        <button id="descargarExcelCambios" class="download-button" disabled>Descargar Excel</button>
-        <button id="vaciarTablaCambios" class="clear-button">Vaciar Tabla</button>
-    </div>
-
-    <div class="list-container">
-        <h2 id="tituloClientesAgregados">Clientes Agregados<span id="contadorPromorack">: 0</span></h2>
-        <table id="clientesAgregados">
-            <thead>
-                <tr>
-                    <th>Centro</th>
-                    <th>Jefe de Zona</th>
-                    <th>Ruta</th>
-                    <th>Código de Cliente</th>
-                    <th>Nombre de Cliente</th>
-                    <th>Nombre de Negocio</th>
-                    <th>Acción</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Aquí se agregarán los clientes -->
-            </tbody>
-        </table>
-    </div>
-
-
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 </body>
 </html>

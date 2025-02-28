@@ -1,7 +1,9 @@
-import {resetInputStyles, handleCentroChange, handleJefeZonaChangeCambios, verificarCondicionesCliente, 
-vaciarTablaClientesAgregados, clientesAgregados, contadorCambios, incrementarContador, 
-incrementarContadorCambios,disminiurContadorCambios, descargarClientesExcel,limpirContadorCambios,limpirContador,
-handleJefeZonaChange} from './utils.js';
+import {
+    resetInputStyles, handleCentroChange, handleJefeZonaChangeCambios, verificarCondicionesCliente,
+    vaciarTablaClientesAgregados, clientesAgregados, contadorCambios, incrementarContador,
+    incrementarContadorCambios, disminiurContadorCambios, descargarClientesExcel, limpirContadorCambios, limpirContador,
+    handleJefeZonaChange
+} from './utils.js';
 
 let estadoBoton = 'Desactivar';
 
@@ -14,16 +16,15 @@ export function loadCambiosData(data) {
     const centroSelect = $('#centroCambios');
     const centros = [...new Set(transformedData.map(item => item.Centro))];
     centros.forEach(centro => centroSelect.append(new Option(centro, centro)));
-    //
 
     const agregarButton = $('#agregarCambios');
 
-
-    centroSelect.select2().on('change', function() {
+    // Configuración de eventos sin Select2
+    centroSelect.on('change', function () {
         handleCentroChange(data, $(this).val(), '#jefeZonaCambios', '#clienteCambios');
     });
 
-    $('#jefeZonaCambios').select2().on('change', function() {
+    $('#jefeZonaCambios').on('change', function () {
         const centro = $('#centroCambios').val();
         const jefeZona = $('#jefeZonaCambios').val();
 
@@ -32,36 +33,38 @@ export function loadCambiosData(data) {
         } else {
             handleJefeZonaChangeCambios(data, centro, jefeZona, '#clienteCambios'); // Mostrar solo los aplicables a PromorackPI
         }
-            
-        //handleJefeZonaChangeCambios(data, $('#centroCambios').val(), $(this).val(), '#clienteCambios');
     });
 
-    $('#clienteCambios').select2().on('change', function() {
+    $('#clienteCambios').on('change', function () {
         handleClienteChange(data, $('#centroCambios').val(), $('#jefeZonaCambios').val(), $(this).val());
     });
 
-    $('#verificarCambios').on('click', function() {
+    // Eventos de los botones
+    $('#verificarCambios').on('click', function () {
         verifyClienteCambios(data, $('#clienteCambios').val());
     });
 
-    $('#agregarCambios').on('click', function() {
+    $('#agregarCambios').on('click', function () {
         agregarClienteCambios(data);
     });
 
-    $('#vaciarTablaCambios').on('click', function() {
+    $('#vaciarTablaCambios').on('click', function () {
         vaciarTablaClientesAgregados();
-        limpirContador(); 
+        limpirContador();
+        mostrarNotificacion('Éxito', 'La tabla ha sido vaciada correctamente.', 'success');
     });
-    $('#descargarExcelCambios').on('click', function() {
-        descargarClientesExcel(); 
+
+    $('#descargarExcelCambios').on('click', function () {
+        descargarClientesExcel();
         limpirContadorCambios();
         limpirContador();
+        mostrarNotificacion('Éxito', 'El archivo Excel ha sido descargado correctamente.', 'success');
     });
 }
 
 // Maneja el cambio en el campo de Cliente
 function handleClienteChange(data, selectedCentro, selectedJefeZona, selectedCliente) {
-    const clienteData = data.find(item => 
+    const clienteData = data.find(item =>
         (item.Centro || 'No Aplica') === (selectedCentro || 'No Aplica') &&
         (item.JefeZona || 'No Aplica') === (selectedJefeZona || 'No Aplica') &&
         item.CODCliente === selectedCliente
@@ -71,7 +74,7 @@ function handleClienteChange(data, selectedCentro, selectedJefeZona, selectedCli
     if (!clienteData) {
         $('#resultadoCambios').text('No Aplica: Cliente no encontrado en la base de datos')
             .removeClass('aplica')
-            .addClass('no-aplica')
+            .addClass('no-aplica alert alert-danger')
             .show();
         $('#agregarCambios, #verificarCambios').prop('disabled', true);
         $('#rutaCambios, #NombreComercial, #NombreClienteLegal').val('');
@@ -84,27 +87,25 @@ function handleClienteChange(data, selectedCentro, selectedJefeZona, selectedCli
     $('#NombreClienteLegal').val(clienteData.NombreClienteLegal);
     $('#resultadoCambios').hide();
 
-    if ($('#agregarCambios').text() === 'Desactivar'){
-        agregarButton.prop('disabled',false)
+    if ($('#agregarCambios').text() === 'Desactivar') {
+        agregarButton.prop('disabled', false);
     }
 }
 
+// Alternar estado del botón
 function alternarEstadoBoton() {
     if (estadoBoton === 'Desactivar') {
-        // Cambia el estado a "Activar" después de desactivar y muestra el botón "Verificar"
-        $('#verificarCambios').removeClass('btn-desactivar').addClass('btn-activar').show().prop('disabled', false);
-        $('#agregarCambios').removeClass('btn-desactivar').addClass('btn-activar').text('Activar').show(); 
+        $('#verificarCambios').removeClass('btn-desactivar').addClass('btn-activar btn-success').show().prop('disabled', false);
+        $('#agregarCambios').removeClass('btn-desactivar').addClass('btn-activar btn-primary').text('Activar').show();
         estadoBoton = 'Activar';
     } else {
-        // Cambia el estado a "Desactivar" y oculta el botón "Verificar"
-        $('#verificarCambios').removeClass('btn-activar').addClass('btn-desactivar').hide(); 
-        $('#agregarCambios').removeClass('btn-activar').addClass('btn-desactivar').text('Desactivar').prop('disabled', false).show();
+        $('#verificarCambios').removeClass('btn-activar').addClass('btn-desactivar btn-secondary').hide();
+        $('#agregarCambios').removeClass('btn-activar').addClass('btn-desactivar btn-primary').text('Desactivar').prop('disabled', false).show();
         estadoBoton = 'Desactivar';
     }
 }
 
-
-// Verifica si el cliente cumple con las condiciones necesarias para aplicar Cambios
+// Verifica si el cliente cumple con las condiciones
 function verifyClienteCambios(data, selectedCliente) {
     const clienteDataList = data.filter(item => item.CODCliente === selectedCliente);
 
@@ -113,7 +114,10 @@ function verifyClienteCambios(data, selectedCliente) {
     const mensajeElement = $('#mensajeCambios');
 
     if (!clienteDataList.length) {
-        resultadoElement.text('No Aplica: Cliente no encontrado en la base de datos').removeClass('aplica').addClass('no-aplica').show();
+        resultadoElement.text('No Aplica: Cliente no encontrado en la base de datos')
+            .removeClass('aplica')
+            .addClass('no-aplica alert alert-danger')
+            .show();
         agregarButton.prop('disabled', true);
         mensajeElement.hide();
         return;
@@ -125,18 +129,23 @@ function verifyClienteCambios(data, selectedCliente) {
     const { cumpleCondiciones, mensaje } = verificarCondicionesCliente(clienteDataList, clusterPermitidos, descripcionesExcluidas);
 
     if (cumpleCondiciones) {
-        resultadoElement.text('Aplica').removeClass('no-aplica').addClass('aplica').show();
-        agregarButton.prop('disabled', false).show(); // Habilita el botón "Activar" para aplicar cambios
+        resultadoElement.text('Aplica')
+            .removeClass('no-aplica')
+            .addClass('aplica alert alert-success')
+            .show();
+        agregarButton.prop('disabled', false).show();
         mensajeElement.hide();
     } else {
-        resultadoElement.text(`No Aplica: ${mensaje}`).removeClass('aplica').addClass('no-aplica').show();
+        resultadoElement.text(`No Aplica: ${mensaje}`)
+            .removeClass('aplica')
+            .addClass('no-aplica alert alert-danger')
+            .show();
         agregarButton.prop('disabled', true);
         mensajeElement.show();
     }
 }
 
 // Agrega el cliente a la lista de Cambios
-
 function agregarClienteCambios(data) {
     const agregarButton = $('#agregarCambios');
     const centro = $('#centroCambios').val();
@@ -159,9 +168,9 @@ function agregarClienteCambios(data) {
 
     clientesAgregados.push(nuevoCliente);
 
-
+    // Agregar fila con animación
     $('#clientesAgregados tbody').append(`
-        <tr>
+        <tr class="fade-in">
             <td>${centro}</td>
             <td>${jefeZona}</td>
             <td>${ruta}</td>
@@ -169,42 +178,44 @@ function agregarClienteCambios(data) {
             <td>${NombreClienteLegal}</td>
             <td>${NombreComercial}</td>
             <td>${estadoBoton}</td>
-            <td><button class="remove-button">Eliminar</button></td>
+            <td><button class="remove-button btn btn-danger btn-sm">Eliminar</button></td>
         </tr>
-    `);
+    `).hide().fadeIn(500);
 
-    $('#descargarExcelCambios').prop('disabled', false); 
+    // Habilitar botón de descargar Excel
+    $('#descargarExcelCambios').prop('disabled', false);
 
-    // Maneja el evento de eliminación
-    $('.remove-button').last().on('click', function() {
-        const index = $(this).closest('tr').index(); // Obtiene el índice de la fila a eliminar
-        clientesAgregados.splice(index, 1); // Elimina el cliente correspondiente de la lista clientesAgregados
-        $(this).closest('tr').remove(); // Elimina la fila del DOM
-    
-        disminiurContadorCambios(); // Disminuye el contador de cambios
-        $('#contadorCambios').text(`: ${contadorCambios}`); // Actualiza el contador en el DOM
-    
+    // Manejar eliminación de fila
+    $('.remove-button').last().on('click', function () {
+        $(this).closest('tr').fadeOut(500, function () {
+            $(this).remove();
+        });
+        disminiurContadorCambios();
+        $('#contadorCambios').text(`: ${contadorCambios}`);
         $('#descargarExcelCambios').prop('disabled', clientesAgregados.length === 0);
     });
-    
 
+    // Resetear campos y actualizar estado
     resetInputStyles();
-    if (agregarButton.hasClass('btn-activar')) {
-        // Cargar todos los clientes
-        handleJefeZonaChangeCambios(data, centro, jefeZona, '#clienteCambios');
-    } else {
-        // Cargar solo los clientes que aplican a 'PromorackPI'
-        handleJefeZonaChange(data, centro, jefeZona, '#clienteCambios');
-
-    }
-    //$('#clienteCambios').empty().append('<option value="">Selecciona un cliente</option>').prop('disabled', false).trigger('change');
     $('#rutaCambios, #NombreComercial, #NombreClienteLegal').val('');
     $('#resultadoCambios, #mensajeCambios').hide();
     $('#agregarCambios, #verificarCambios').prop('disabled', true);
 
     alternarEstadoBoton();
-
     incrementarContadorCambios();
-    agregarButton.prop('disabled', true)
+    agregarButton.prop('disabled', true);
     $('#contadorCambios').text(`: ${contadorCambios}`);
+
+    // Notificación de éxito
+    mostrarNotificacion('Éxito', 'El cliente ha sido agregado correctamente.', 'success');
+}
+
+// Función para mostrar notificaciones con SweetAlert 1.x
+function mostrarNotificacion(titulo, mensaje, tipo) {
+    swal({
+        title: titulo,
+        text: mensaje,
+        icon: tipo, // 'success', 'error', 'warning', 'info'
+        button: "Aceptar"
+    });
 }
