@@ -95,6 +95,8 @@ async function actualizarPerfil() {
         if (response.ok) {
             alert('Perfil actualizado correctamente.');
             document.getElementById('usuario').value = data.usuario;
+            window.location.reload();
+
         } else {
             const errorData = await response.json();
             alert(`Error al actualizar el perfil: ${errorData.error || 'Error desconocido'}`);

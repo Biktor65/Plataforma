@@ -220,17 +220,24 @@
             </div>
 
             <div class="container">
-                <!-- Tarjeta principal para agrupar todo el contenido -->
-                <div class="card shadow-sm">
+                <div class="page-inner">
                     <div class="card-body">
-                        <!-- Pestañas de navegación -->
-                        <div class="tabs text-center mb-4">
-                            <button id="tabPromorack" class="btn btn-primary active">Validación de Promorack</button>
-                            <button id="tabCambios" class="btn btn-primary">Cambios</button>
-                            <button onclick="location.href='/'" class="btn btn-secondary">Volver al Inicio</button>
+                        <div class="d-flex align-items-center justify-content-between w-100 mb-4 ">
+                            <div class="d-flex justify-content-center flex-grow-1">
+                                <div class="tabs text-center">
+                                    <button id="tabPromorack" class="btn btn-primary active" aria-selected="true" role="tab">Validación de Promorack</button>
+                                    <button id="tabCambios" class="btn btn-primary" aria-selected="false" role="tab">Cambios</button>
+                                </div>
+                            </div>
+                            <div class="ms-md-auto">
+                                <button data-action="go-home" class="btn btn-label-info btn-round me-2">Volver al Inicio</button>
+                            </div>
                         </div>
-            
-                        <!-- Contenedor de Validación de Promorack -->
+
+
+                        <div class="col-md-12">
+                            <div class="card card-round">
+                                <div class="card-body">
                         <div id="containerPromorack" class="active">
                             <h1 class="text-center mb-4">Validación de Promorack</h1>
                             <div class="row">
@@ -353,8 +360,12 @@
                             </div>
                         </div>
                     </div>
-                </div>
             </div>
+        </div>
+        </div>
+    </div>
+</div>
+
 
             <div class="footer">
                 <p>&copy; 2024 Todos los derechos reservados.</p>
