@@ -151,8 +151,8 @@ def cargar_acciones():
 
         if usuario:
             datos_usuario = {
-                "nombre": usuario[1],  # Columna 'usuario'
-                "rol": usuario[3]  # Columna 'rol'
+                "nombre": usuario[1], 
+                "rol": usuario[3]  
             }
         else:
             datos_usuario = {

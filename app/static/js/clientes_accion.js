@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    // Configuración de DataTables para la tabla de clientes
     let table = $('#clientesAccionTable').DataTable({
         "processing": true,
         "serverSide": true,
@@ -7,7 +6,7 @@ $(document).ready(function () {
             "url": "/admin/fetch_clientes_accion_paginated",
             "type": "GET",
             "data": function (d) {
-                d.searchValue = $('#searchTable').val();  // Enviar el valor de búsqueda al backend
+                d.searchValue = $('#searchTable').val();  
             }
         },
         "columns": [
@@ -23,7 +22,7 @@ $(document).ready(function () {
                         <button class="btn btn-link btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editClienteModal${row.CODCLIENTE}${row.CODAccionComercial}">
                             <i class="fa fa-edit"></i>
                         </button>
-                        <form action="${row.delete_url}" method="POST" onsubmit="return confirmDelete();" style="display:inline;">
+                        <form action="${row.delete_url}" method="POST" class="delete-form" style="display:inline;">
                             <button type="submit" class="btn btn-link btn-danger btn-sm">
                                 <i class="fa fa-times"></i>
                             </button>
@@ -33,7 +32,7 @@ $(document).ready(function () {
             }
         ],
         "paging": true,
-        "searching": false,  // Desactiva la búsqueda interna de DataTables
+        "searching": false,  
         "ordering": false,
         "info": false,
         "lengthChange": false,
@@ -50,13 +49,11 @@ $(document).ready(function () {
         }
     });
 
-    // Actualizar la tabla cuando el usuario escriba en el campo de búsqueda de la tabla
     $('#searchTable').on('keyup', function () {
-        table.ajax.reload();  // Recargar los datos con el nuevo valor de búsqueda
+        table.ajax.reload(); 
     });
 });
 
-// Función para mostrar sugerencias en la barra de búsqueda de la tabla
 function fetchSuggestionsTable() {
     const input = document.getElementById('searchTable');
     const filter = input.value.trim().toLowerCase();
@@ -75,7 +72,7 @@ function fetchSuggestionsTable() {
                         div.onclick = () => {
                             input.value = item.CODCLIENTE;
                             suggestions.style.display = 'none';
-                            table.ajax.reload(); // Recargar la tabla con el cliente seleccionado
+                            table.ajax.reload(); 
                         };
                         suggestions.appendChild(div);
                     });
@@ -89,10 +86,8 @@ function fetchSuggestionsTable() {
     }
 }
 
-// Evento para la barra de búsqueda de la tabla
 document.getElementById('searchTable').addEventListener('input', fetchSuggestionsTable);
 
-// Función para mostrar sugerencias en la barra de búsqueda del modal
 function fetchSuggestionsModal() {
     const input = document.getElementById('searchModal');
     const filter = input.value.trim().toLowerCase();
@@ -111,7 +106,7 @@ function fetchSuggestionsModal() {
                         div.onclick = () => {
                             input.value = item.CODCLIENTE;
                             suggestions.style.display = 'none';
-                            fetchClientDataModal(item.CODCLIENTE); // Actualizar la información del cliente en el modal
+                            fetchClientDataModal(item.CODCLIENTE); 
                         };
                         suggestions.appendChild(div);
                     });
@@ -125,10 +120,8 @@ function fetchSuggestionsModal() {
     }
 }
 
-// Evento para la barra de búsqueda del modal
 document.getElementById('searchModal').addEventListener('input', fetchSuggestionsModal);
 
-// Función para actualizar la información del cliente en el modal
 function fetchClientDataModal(codcliente) {
     fetch(`/admin/fetch_cliente/${codcliente}`)
         .then(response => {
@@ -150,7 +143,6 @@ function fetchClientDataModal(codcliente) {
         .catch(error => console.error('Error al obtener datos del cliente:', error));
 }
 
-// Ocultar sugerencias al hacer clic fuera de los campos de búsqueda
 document.addEventListener('click', function (event) {
     const suggestionsTable = document.getElementById('suggestionsTable');
     const searchTable = document.getElementById('searchTable');
@@ -165,14 +157,19 @@ document.addEventListener('click', function (event) {
     }
 });
 
-// Confirmación de eliminación
-function confirmDelete() {
-    return confirm("¿Estás seguro de que deseas eliminar esta acción?");
-}
+async function confirmDelete() {
+    const result = await Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¿Estás seguro de que deseas eliminar esta acción?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+    });
 
-// Confirmación de actualización
-function confirmUpdate() {
-    return confirm("¿Estás seguro de que deseas actualizar este cliente y su acción comercial?");
+    return result.isConfirmed;
 }
 
 document.getElementById('cargarExcelBtn').addEventListener('click', async () => {
@@ -230,12 +227,11 @@ document.getElementById('cargarExcelBtn').addEventListener('click', async () => 
 
                 if (insertResponse.ok) {
                     alert("Datos subidos correctamente.");
-                    location.reload(); // Recargar la página para mostrar los nuevos datos
+                    location.reload(); 
                 } else {
                     alert("Error al subir los datos.");
                 }
 
-                // Cerrar el modal
                 confirmModal.hide();
             };
 
@@ -246,3 +242,60 @@ document.getElementById('cargarExcelBtn').addEventListener('click', async () => 
         alert("Error en la conexión con el servidor.");
     }
 });
+
+$(document).on('submit', '.delete-form', function (e) {
+    e.preventDefault(); 
+
+    Swal.fire({
+        title: '¿Eliminar acción?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            this.submit(); 
+        }
+    });
+});
+
+document.querySelectorAll('.update-form').forEach(form => {
+    form.addEventListener('submit', function (e) {
+        e.preventDefault(); 
+        Swal.fire({
+            title: '¿Actualizar acción?',
+            text: "¿Confirmas los cambios?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, actualizar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.submit(); 
+            }
+        });
+    });
+});
+
+function showMessage(type, message) {
+    const container = document.getElementById('message-container');
+
+    // Crear el mensaje
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${type}`;
+    messageDiv.innerHTML = `
+        <span>${message}</span>
+        <button onclick="this.parentElement.remove()">&times;</button>
+    `;
+
+    container.appendChild(messageDiv);
+
+    setTimeout(() => {
+        messageDiv.remove();
+    }, 5000);
+}

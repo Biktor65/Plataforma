@@ -129,43 +129,16 @@ function cargarGraficoFormularios() {
 
 
 
-function editarFormulario(formularioID) {
-    window.location.href = `/admin/formularios/editar/${formularioID}`;
-}
-
-function aprobarFormulario(formularioID) {
-    fetch(`/admin/actualizar_estado/${formularioID}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ Estado: 'Aprobado' })
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.text().then(text => { throw new Error(text) });
-        }
-        return response.json();
-    })
-    .then(data => {
-        alert('Formulario aprobado con éxito');
-        location.reload();
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error al aprobar el formulario: ' + error.message);
-    });
-}
-
 function descargarFormulario(formularioID) {
     window.location.href = `/admin/formularios/descargar/${formularioID}`;
 }
 
-// Función para redirigir a la edición del formulario
 function editarFormulario(formularioID) {
     fetch(`/admin/api/formularios/${formularioID}`)
         .then(response => response.json())
         .then(data => {
             const modalTitle = document.getElementById('editarFormularioModalLabel');
-            modalTitle.setAttribute('data-formulario-id', formularioID); // Guardamos el ID en el modal
+            modalTitle.setAttribute('data-formulario-id', formularioID);
 
             const tbody = document.getElementById('tablaDetalles');
             tbody.innerHTML = "";
@@ -200,12 +173,16 @@ function editarFormulario(formularioID) {
             myModal.show();
         })
         .catch(error => {
-            console.error('Error al obtener datos del formulario:', error);
-            alert('No se pudo cargar el formulario.');
-        });
+            Swal.fire({
+                title: "Error",
+                text: "No se pudo cargar el formulario: " + error.message,
+                icon: "error",
+                confirmButtonText: "Aceptar",
+                confirmButtonColor: "#dc3545"
+            });
+        });
 }
 
-// Función para mostrar el icono de eliminar cuando el mouse está sobre la fila
 function mostrarEliminarIcono(fila) {
     const icono = fila.querySelector('.delete-icon');
     if (icono) {
@@ -213,7 +190,6 @@ function mostrarEliminarIcono(fila) {
     }
 }
 
-// Función para ocultar el icono de eliminar cuando el mouse sale de la fila
 function ocultarEliminarIcono(fila) {
     const icono = fila.querySelector('.delete-icon');
     if (icono) {
@@ -221,13 +197,45 @@ function ocultarEliminarIcono(fila) {
     }
 }
 
-// Función para eliminar una fila
 function eliminarFila(icono) {
     const fila = icono.closest('tr');
-    fila.remove();
+    const detalleID = fila.getAttribute('data-id');
+
+    if (!detalleID) {
+        Swal.fire({
+            title: "Error",
+            text: "No se encontró el ID del registro.",
+            icon: "error",
+            confirmButtonText: "Aceptar",
+            confirmButtonColor: "#dc3545"
+        });
+        return;
+    }
+
+    Swal.fire({
+        title: "¿Estás seguro?",
+        text: "¡No podrás revertir esta acción!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#28a745",
+        cancelButtonColor: "#dc3545"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            filasParaEliminar.push(detalleID);
+            fila.classList.add("fila-eliminada");
+            Swal.fire({
+                title: "¡Eliminado!",
+                text: "El registro ha sido eliminado.",
+                icon: "success",
+                confirmButtonText: "Aceptar",
+                confirmButtonColor: "#28a745"
+            });
+        }
+    });
 }
 
-// Función para hacer la celda editable al hacer doble clic
 function convertirEditable(celda) {
     let valorActual = celda.innerText;
     let input = document.createElement("input");
@@ -242,17 +250,22 @@ function convertirEditable(celda) {
     input.focus();
 }
 
-// Función para guardar los cambios en la base de datos
 function guardarCambios() {
     const formularioID = document.getElementById('editarFormularioModalLabel').getAttribute('data-formulario-id');
-    
+
     if (!formularioID) {
-        alert("Error: No se encontró el ID del formulario.");
+        Swal.fire({
+            title: "Error",
+            text: "No se encontró el ID del formulario.",
+            icon: "error",
+            confirmButtonText: "Aceptar",
+            confirmButtonColor: "#dc3545"
+        });
         return;
     }
 
     const tbody = document.getElementById('tablaDetalles');
-    const rows = tbody.querySelectorAll('tr:not(.fila-eliminada)'); // Solo filas NO eliminadas
+    const rows = tbody.querySelectorAll('tr:not(.fila-eliminada)');
     const detalles = [];
 
     rows.forEach(row => {
@@ -270,7 +283,6 @@ function guardarCambios() {
         });
     });
 
-    // Enviar cambios de edición y eliminaciones en la misma petición
     fetch(`/admin/actualizar_formulario/${formularioID}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -282,57 +294,92 @@ function guardarCambios() {
     .then(response => response.json())
     .then(data => {
         if (data.error) {
-            alert('Error: ' + data.error);
+            Swal.fire({
+                title: "Error",
+                text: data.error,
+                icon: "error",
+                confirmButtonText: "Aceptar",
+                confirmButtonColor: "#dc3545"
+            });
         } else {
-            alert('Cambios guardados correctamente');
-            location.reload();  // Recargar la página para reflejar los cambios
+            Swal.fire({
+                title: "¡Guardado!",
+                text: "Los cambios se han guardado correctamente.",
+                icon: "success",
+                confirmButtonText: "Aceptar",
+                confirmButtonColor: "#28a745"
+            }).then(() => {
+                location.reload();
+            });
         }
     })
     .catch(error => {
-        console.error('Error al guardar cambios:', error);
-        alert('Error al guardar cambios.');
+        Swal.fire({
+            title: "Error",
+            text: "Error al guardar cambios: " + error.message,
+            icon: "error",
+            confirmButtonText: "Aceptar",
+            confirmButtonColor: "#dc3545"
+        });
     });
 }
 
-// Función para aprobar formulario
+let filasParaEliminar = [];
+
 function aprobarFormulario(formularioID) {
-    fetch(`/admin/actualizar_estado/${formularioID}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ Estado: 'Aprobado' })
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert('Formulario aprobado con éxito');
-        location.reload();
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error al aprobar el formulario: ' + error.message);
+    if (!formularioID) {
+        Swal.fire({
+            title: "Error",
+            text: "No se proporcionó un ID de formulario válido.",
+            icon: "error",
+            confirmButtonText: "Aceptar",
+            confirmButtonColor: "#dc3545"
+        });
+        return;
+    }
+
+    Swal.fire({
+        title: "¿Estás seguro?",
+        text: "¿Deseas aprobar este formulario?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, aprobar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#28a745",
+        cancelButtonColor: "#dc3545"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/admin/actualizar_estado/${formularioID}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ Estado: 'Aprobado' })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text) });
+                }
+                return response.json();
+            })
+            .then(data => {
+                Swal.fire({
+                    title: "¡Aprobado!",
+                    text: "El formulario ha sido aprobado con éxito.",
+                    icon: "success",
+                    confirmButtonText: "Aceptar",
+                    confirmButtonColor: "#28a745"
+                }).then(() => {
+                    location.reload();
+                });
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: "Error",
+                    text: "Error al aprobar el formulario: " + error.message,
+                    icon: "error",
+                    confirmButtonText: "Aceptar",
+                    confirmButtonColor: "#dc3545"
+                });
+            });
+        }
     });
 }
-
-// Función para descargar formulario
-function descargarFormulario(formularioID) {
-    window.location.href = `/admin/formularios/descargar/${formularioID}`;
-}
-
-let filasParaEliminar = []; 
-
-function eliminarFila(icono) {
-    const fila = icono.closest('tr');
-    const detalleID = fila.getAttribute('data-id');
-
-    if (!detalleID) {
-        alert("Error: No se encontró el ID del registro.");
-        return;
-    }
-
-    if (!confirm("¿Estás seguro de que deseas eliminar este registro?")) {
-        return;
-    }
-
-    filasParaEliminar.push(detalleID); 
-    fila.classList.add("fila-eliminada"); 
-}
-
